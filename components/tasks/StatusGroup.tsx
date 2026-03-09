@@ -79,6 +79,26 @@ export function StatusGroup({
             <div className="text-right pr-2">Notes</div>
           </div>
 
+          {/* Empty state when search yields no results in this group */}
+          {search && filtered.length === 0 && tasks.length > 0 && (
+            <div className="py-3 pl-[60px] text-[11px] text-gray-400">
+              No matching tasks
+            </div>
+          )}
+
+          {/* Empty state when group has no tasks at all */}
+          {!search && filtered.length === 0 && (
+            <div className="py-3 pl-[60px] text-[11px] text-gray-400">
+              No tasks &mdash;{' '}
+              <button
+                onClick={() => openTaskModal(undefined, status.id)}
+                className="text-cyan-600 hover:text-cyan-700 underline underline-offset-2"
+              >
+                Add Task
+              </button>
+            </div>
+          )}
+
           {/* Task rows */}
           <SortableContext
             items={filtered.map((t) => t.id)}

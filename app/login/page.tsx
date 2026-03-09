@@ -23,7 +23,11 @@ export default function LoginPage() {
     });
 
     if (authError) {
-      setError("Invalid credentials");
+      setError(
+        authError.message.includes("Invalid login")
+          ? "Invalid email or password"
+          : "Something went wrong, please try again"
+      );
       setLoading(false);
       return;
     }

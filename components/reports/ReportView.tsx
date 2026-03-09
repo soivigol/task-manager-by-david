@@ -31,10 +31,12 @@ export function ReportView({ initialReport, clients }: ReportViewProps) {
   const [clientFilter, setClientFilter] = useState<string>('all')
   const [report, setReport] = useState<ReportData>(initialReport)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const fetchReport = useCallback(
     async (y: number, m: number, cid: string) => {
       setLoading(true)
+      setError(null)
       try {
         const { start, end } = getMonthRange(y, m)
         const data = await getReport(
@@ -43,8 +45,10 @@ export function ReportView({ initialReport, clients }: ReportViewProps) {
           cid === 'all' ? undefined : cid
         )
         setReport(data)
-      } catch {
-        // silently fail — keep current report
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Failed to load report'
+        )
       } finally {
         setLoading(false)
       }
@@ -149,6 +153,13 @@ export function ReportView({ initialReport, clients }: ReportViewProps) {
         {loading && (
           <p className="text-[11px] text-gray-400 py-4 text-center">
             Loading...
+          </p>
+        )}
+
+        {/* Error state */}
+        {!loading && error && (
+          <p className="text-[11px] text-red-500 py-4 text-center">
+            {error}
           </p>
         )}
 

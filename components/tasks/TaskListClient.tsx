@@ -18,6 +18,7 @@ import {
 } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import { reorderTasks } from '@/lib/api/tasks'
+import { useKeyboard } from '@/lib/hooks/useKeyboard'
 
 interface TaskListClientProps {
   initialTasks: Task[]
@@ -41,6 +42,9 @@ export function TaskListClient({
   const closePicker = useAppStore((s) => s.closePicker)
 
   const reorderTasksOptimistic = useAppStore((s) => s.reorderTasksOptimistic)
+
+  // Global keyboard shortcuts (Ctrl+N, Esc)
+  useKeyboard()
 
   const [timePop, setTimePop] = useState<{ taskId: string; taskTitle: string } | null>(null)
 
@@ -139,6 +143,13 @@ export function TaskListClient({
     [tasks, tasksByStatus, reorderTasksOptimistic]
   )
 
+  // Check if search yields zero results across all groups
+  const hasSearchResults = useMemo(() => {
+    if (!search) return true
+    const q = search.toLowerCase()
+    return tasks.some((t) => !t.parent_id && t.title.toLowerCase().includes(q))
+  }, [tasks, search])
+
   if (statuses.length === 0) {
     return (
       <div className="p-8 text-center text-gray-400 text-[13px]">
@@ -154,6 +165,11 @@ export function TaskListClient({
       onDragEnd={handleDragEnd}
     >
       <div className="px-3 py-2">
+        {search && !hasSearchResults && (
+          <div className="py-8 text-center text-gray-400 text-[13px]">
+            No tasks match &lsquo;{search}&rsquo;
+          </div>
+        )}
         {statuses.map((status) => (
           <StatusGroup
             key={status.id}
