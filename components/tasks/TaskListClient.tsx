@@ -7,6 +7,7 @@ import { StatusGroup } from './StatusGroup'
 import { StatusPicker } from './StatusPicker'
 import { TaskModal } from './TaskModal'
 import { TimePopup } from './TimePopup'
+import { ToastContainer } from '@/components/ui/Toast'
 
 interface TaskListClientProps {
   initialTasks: Task[]
@@ -122,6 +123,8 @@ export function TaskListClient({
           onClose={() => setTimePop(null)}
         />
       )}
+
+      <ToastContainer />
     </div>
   )
 }

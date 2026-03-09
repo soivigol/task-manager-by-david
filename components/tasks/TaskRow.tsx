@@ -4,8 +4,9 @@ import { useState, useCallback } from 'react'
 import type { Task, Status, Client, Priority } from '@/types/app.types'
 import { useAppStore } from '@/lib/store/app-store'
 import { updateTask } from '@/lib/api/tasks'
-import { ChevronIcon, PlusIcon, GripIcon, ClockIcon } from '@/components/ui/Icons'
+import { ChevronIcon, PlusIcon, GripIcon, ClockIcon, RepeatIcon } from '@/components/ui/Icons'
 import { fmt, fmtDate } from '@/lib/utils'
+import { recurrenceLabel } from '@/lib/recurrence'
 
 const GRID = 'minmax(0, 1fr) 96px 30px 78px 78px 86px'
 
@@ -131,6 +132,13 @@ export function TaskRow({
           >
             {task.title}
           </button>
+
+          {!isSubtask && task.recurrence_type && (
+            <span className="shrink-0 inline-flex items-center gap-0.5 text-[10px] text-cyan-600 bg-cyan-50 rounded px-1.5 py-[1px] font-medium mr-0.5">
+              <RepeatIcon size={9} />
+              {recurrenceLabel(task)}
+            </span>
+          )}
 
           {!isSubtask && (
             <button
