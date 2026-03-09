@@ -2,7 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-import type { Priority } from '@/types/app.types'
+import type { Priority, RecurrenceType } from '@/types/app.types'
 
 export async function getTasks() {
   const supabase = await createClient()
@@ -28,6 +28,10 @@ export async function createTask(formData: {
   quick_notes?: string | null
   description?: Record<string, unknown> | null
   parent_id?: string | null
+  recurrence_type?: RecurrenceType | null
+  recurrence_interval?: number | null
+  recurrence_days?: number | null
+  recurrence_weekdays?: number[] | null
 }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -58,6 +62,10 @@ export async function createTask(formData: {
       description: formData.description ?? null,
       parent_id: formData.parent_id ?? null,
       sort_order: nextOrder,
+      recurrence_type: formData.recurrence_type ?? null,
+      recurrence_interval: formData.recurrence_interval ?? null,
+      recurrence_days: formData.recurrence_days ?? null,
+      recurrence_weekdays: formData.recurrence_weekdays ?? null,
     })
     .select()
     .single()
@@ -77,6 +85,10 @@ export async function updateTask(
     priority?: Priority
     quick_notes?: string | null
     description?: Record<string, unknown> | null
+    recurrence_type?: RecurrenceType | null
+    recurrence_interval?: number | null
+    recurrence_days?: number | null
+    recurrence_weekdays?: number[] | null
   }
 ) {
   const supabase = await createClient()

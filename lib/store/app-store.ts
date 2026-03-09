@@ -26,6 +26,8 @@ interface AppState {
   isTaskModalOpen: boolean;
   isNewTask: boolean;
   defaultStatusId: string | null;
+  parentTaskId: string | null;
+  confirmDialog: { taskId: string; taskTitle: string } | null;
   toasts: Toast[];
   picker: PickerState | null;
 
@@ -41,8 +43,10 @@ interface AppState {
   removeTaskOptimistic: (id: string) => void;
 
   // UI actions
-  openTaskModal: (taskId?: string, defaultStatusId?: string) => void;
+  openTaskModal: (taskId?: string, defaultStatusId?: string, parentTaskId?: string) => void;
   closeTaskModal: () => void;
+  openConfirmDialog: (taskId: string, taskTitle: string) => void;
+  closeConfirmDialog: () => void;
   openPicker: (picker: PickerState) => void;
   closePicker: () => void;
   addToast: (message: string, type?: Toast["type"]) => void;
@@ -61,6 +65,8 @@ export const useAppStore = create<AppState>((set) => ({
   isTaskModalOpen: false,
   isNewTask: false,
   defaultStatusId: null,
+  parentTaskId: null,
+  confirmDialog: null,
   toasts: [],
   picker: null,
 
@@ -87,12 +93,13 @@ export const useAppStore = create<AppState>((set) => ({
     })),
 
   // UI actions
-  openTaskModal: (taskId, defaultStatusId) =>
+  openTaskModal: (taskId, defaultStatusId, parentTaskId) =>
     set({
       isTaskModalOpen: true,
       selectedTaskId: taskId ?? null,
       isNewTask: !taskId,
       defaultStatusId: defaultStatusId ?? null,
+      parentTaskId: parentTaskId ?? null,
     }),
   closeTaskModal: () =>
     set({
@@ -100,7 +107,12 @@ export const useAppStore = create<AppState>((set) => ({
       selectedTaskId: null,
       isNewTask: false,
       defaultStatusId: null,
+      parentTaskId: null,
     }),
+  openConfirmDialog: (taskId, taskTitle) =>
+    set({ confirmDialog: { taskId, taskTitle } }),
+  closeConfirmDialog: () =>
+    set({ confirmDialog: null }),
   openPicker: (picker) => set({ picker }),
   closePicker: () => set({ picker: null }),
   addToast: (message, type = "info") =>

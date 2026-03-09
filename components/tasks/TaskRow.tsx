@@ -132,7 +132,7 @@ export function TaskRow({
 
           {!isSubtask && (
             <button
-              onClick={() => openTaskModal(undefined, task.status_id)}
+              onClick={() => openTaskModal(undefined, task.status_id, task.id)}
               title="Add subtask"
               className="opacity-0 group-hover:opacity-100 shrink-0 mx-0.5 w-[20px] h-[20px] rounded flex items-center justify-center text-gray-300 hover:text-cyan-600 hover:bg-cyan-50 transition-all"
             >

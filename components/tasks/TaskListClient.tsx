@@ -5,6 +5,7 @@ import type { Task, Status, Client } from '@/types/app.types'
 import { useAppStore } from '@/lib/store/app-store'
 import { StatusGroup } from './StatusGroup'
 import { StatusPicker } from './StatusPicker'
+import { TaskModal } from './TaskModal'
 
 interface TaskListClientProps {
   initialTasks: Task[]
@@ -103,6 +104,8 @@ export function TaskListClient({
           pos={{ x: picker.x, y: picker.y }}
         />
       )}
+
+      <TaskModal />
     </div>
   )
 }
