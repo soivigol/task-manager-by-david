@@ -2,11 +2,13 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import type { Priority, RecurrenceType, TimeEntry } from '@/types/app.types'
+import type { JSONContent } from '@tiptap/react'
 import { useAppStore } from '@/lib/store/app-store'
 import { createTask, updateTask, deleteTask } from '@/lib/api/tasks'
 import { getTimeEntries, deleteTimeEntry } from '@/lib/api/time-entries'
 import { Modal } from '@/components/ui/Modal'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
+import { TiptapEditor } from '@/components/ui/TiptapEditor'
 import { TrashIcon, XIcon, RepeatIcon, ClockIcon } from '@/components/ui/Icons'
 import { fmt, fmtDate } from '@/lib/utils'
 
@@ -28,7 +30,7 @@ interface TaskFormData {
   due_date: string
   priority: Priority
   quick_notes: string
-  description: string
+  description: JSONContent | null
   recurrence_type: RecurrenceOption
   recurrence_interval: number
   recurrence_days: number
@@ -76,7 +78,7 @@ export function TaskModal() {
     due_date: '',
     priority: 'normal',
     quick_notes: '',
-    description: '',
+    description: null,
     recurrence_type: 'none',
     recurrence_interval: 1,
     recurrence_days: 14,
@@ -101,12 +103,7 @@ export function TaskModal() {
         due_date: existingTask.due_date ?? '',
         priority: existingTask.priority,
         quick_notes: existingTask.quick_notes ?? '',
-        description:
-          existingTask.description != null
-            ? typeof existingTask.description === 'string'
-              ? (existingTask.description as string)
-              : ''
-            : '',
+        description: (existingTask.description as JSONContent | null) ?? null,
         recurrence_type: existingTask.recurrence_type ?? 'none',
         recurrence_interval: existingTask.recurrence_interval ?? 1,
         recurrence_days: existingTask.recurrence_days ?? 14,
@@ -120,7 +117,7 @@ export function TaskModal() {
         due_date: '',
         priority: 'normal',
         quick_notes: '',
-        description: '',
+        description: null,
         recurrence_type: 'none',
         recurrence_interval: 1,
         recurrence_days: 14,
@@ -245,7 +242,7 @@ export function TaskModal() {
           due_date: form.due_date || null,
           priority: form.priority,
           quick_notes: form.quick_notes || null,
-          description: null as Record<string, unknown> | null,
+          description: (form.description as Record<string, unknown> | null) ?? null,
           parent_id: parentTaskId ?? null,
           ...recurrence,
         }
@@ -261,6 +258,7 @@ export function TaskModal() {
           due_date: form.due_date || null,
           priority: form.priority,
           quick_notes: form.quick_notes || null,
+          description: (form.description as Record<string, unknown> | null) ?? null,
           ...recurrence,
         }
 
@@ -609,12 +607,9 @@ export function TaskModal() {
             <label className="block text-[10px] font-semibold text-gray-400 mb-1 uppercase tracking-wider">
               Description
             </label>
-            <textarea
-              value={form.description}
-              onChange={(e) => setField('description', e.target.value)}
-              rows={4}
-              placeholder="Detailed description..."
-              className="w-full border border-gray-200 rounded-lg px-3 py-[7px] text-[13px] focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 resize-none"
+            <TiptapEditor
+              content={form.description}
+              onChange={(json) => setField('description', json)}
             />
           </div>
 
