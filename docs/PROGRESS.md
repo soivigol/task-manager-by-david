@@ -31,6 +31,16 @@ Any active status → 🚫 Blocked (external dependency or question)
 🚫 Blocked → 🔧 In Progress (once resolved)
 ```
 
+## Post-Phase Improvements
+
+### Inline editing & smart sorting (2026-03-10)
+- **Inline title editing**: click task name to edit in place (Enter/blur saves, Esc cancels)
+- **Inline due date editing**: click date to open native date picker
+- **Inline client picker**: click client badge to change client via dropdown
+- **Pencil icon**: opens full modal, visible on hover and during title edit
+- **Smart task sorting**: default sort by priority then due date desc; if user drags to reorder, that group switches to manual sort order (persisted in localStorage)
+- **Hydration fix**: localStorage-backed state (dateFilter, collapsedGroups, customOrderGroups) now deferred to post-mount to prevent SSR hydration mismatch
+
 ## Notes
 
 _Updated by Claude Code at every status transition. A phase only reaches

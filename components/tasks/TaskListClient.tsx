@@ -64,6 +64,9 @@ export function TaskListClient({
   const closePicker = useAppStore((s) => s.closePicker)
 
   const reorderTasksOptimistic = useAppStore((s) => s.reorderTasksOptimistic)
+  const customOrderGroups = useAppStore((s) => s.customOrderGroups)
+  const setCustomOrder = useAppStore((s) => s.setCustomOrder)
+  const hydrateFromStorage = useAppStore((s) => s.hydrateFromStorage)
 
   // Global keyboard shortcuts (Ctrl+N, Esc)
   useKeyboard()
@@ -80,6 +83,11 @@ export function TaskListClient({
       activationConstraint: { distance: 5 },
     })
   )
+
+  // Hydrate localStorage-backed state after mount (avoids SSR mismatch)
+  useEffect(() => {
+    hydrateFromStorage()
+  }, [hydrateFromStorage])
 
   // Populate store on mount / when server data changes
   useEffect(() => {
@@ -111,13 +119,17 @@ export function TaskListClient({
 
     const byStatus: Record<string, Task[]> = {}
     for (const status of statuses) {
-      byStatus[status.id] = topLevel
-        .filter((t) => t.status_id === status.id)
-        .sort(compareTasks)
+      const group = topLevel.filter((t) => t.status_id === status.id)
+      if (customOrderGroups[status.id]) {
+        group.sort((a, b) => a.sort_order - b.sort_order)
+      } else {
+        group.sort(compareTasks)
+      }
+      byStatus[status.id] = group
     }
 
     return { tasksByStatus: byStatus, subtasksMap: sMap }
-  }, [tasks, statuses])
+  }, [tasks, statuses, customOrderGroups])
 
   // Close picker on outside click
   useEffect(() => {
@@ -152,6 +164,9 @@ export function TaskListClient({
       const reordered = arrayMove(groupTasks, oldIndex, newIndex)
       const orderedIds = reordered.map((t) => t.id)
 
+      // Mark this group as manually ordered
+      setCustomOrder(statusId)
+
       // Optimistic update
       reorderTasksOptimistic(statusId, orderedIds)
 
@@ -162,7 +177,7 @@ export function TaskListClient({
         reorderTasksOptimistic(statusId, revertIds)
       })
     },
-    [tasks, tasksByStatus, reorderTasksOptimistic]
+    [tasks, tasksByStatus, reorderTasksOptimistic, setCustomOrder]
   )
 
   // Check if search yields zero results across all groups

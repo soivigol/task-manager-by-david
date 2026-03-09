@@ -33,6 +33,7 @@ interface AppState {
   toasts: Toast[];
   picker: PickerState | null;
   collapsedGroups: Record<string, boolean>;
+  customOrderGroups: Record<string, boolean>;
   dateFilter: DateFilter;
 
   // Data actions
@@ -57,33 +58,23 @@ interface AppState {
   addToast: (message: string, type?: Toast["type"]) => void;
   removeToast: (id: string) => void;
   toggleGroupCollapsed: (statusId: string) => void;
+  setCustomOrder: (statusId: string) => void;
+  clearCustomOrder: (statusId: string) => void;
   setDateFilter: (filter: DateFilter) => void;
-}
-
-function loadDateFilter(): DateFilter {
-  if (typeof window === "undefined") return "all";
-  try {
-    const raw = localStorage.getItem("dateFilter");
-    if (raw === "1m" || raw === "3m" || raw === "6m" || raw === "all") return raw;
-    return "all";
-  } catch {
-    return "all";
-  }
-}
-
-function loadCollapsedGroups(): Record<string, boolean> {
-  if (typeof window === "undefined") return {};
-  try {
-    const raw = localStorage.getItem("collapsedGroups");
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return {};
-  }
+  hydrateFromStorage: () => void;
 }
 
 function saveCollapsedGroups(groups: Record<string, boolean>) {
   try {
     localStorage.setItem("collapsedGroups", JSON.stringify(groups));
+  } catch {
+    // Ignore storage errors
+  }
+}
+
+function saveCustomOrderGroups(groups: Record<string, boolean>) {
+  try {
+    localStorage.setItem("customOrderGroups", JSON.stringify(groups));
   } catch {
     // Ignore storage errors
   }
@@ -105,8 +96,9 @@ export const useAppStore = create<AppState>((set) => ({
   confirmDialog: null,
   toasts: [],
   picker: null,
-  collapsedGroups: loadCollapsedGroups(),
-  dateFilter: loadDateFilter(),
+  collapsedGroups: {},
+  customOrderGroups: {},
+  dateFilter: "all",
 
   // Data actions
   setTasks: (tasks) => set({ tasks }),
@@ -190,4 +182,38 @@ export const useAppStore = create<AppState>((set) => ({
       saveCollapsedGroups(next);
       return { collapsedGroups: next };
     }),
+  setCustomOrder: (statusId) =>
+    set((state) => {
+      const next = { ...state.customOrderGroups, [statusId]: true };
+      saveCustomOrderGroups(next);
+      return { customOrderGroups: next };
+    }),
+  clearCustomOrder: (statusId) =>
+    set((state) => {
+      const next = { ...state.customOrderGroups };
+      delete next[statusId];
+      saveCustomOrderGroups(next);
+      return { customOrderGroups: next };
+    }),
+  hydrateFromStorage: () => {
+    try {
+      const rawDate = localStorage.getItem("dateFilter");
+      const dateFilter: DateFilter =
+        rawDate === "1m" || rawDate === "3m" || rawDate === "6m" ? rawDate : "all";
+
+      const rawCollapsed = localStorage.getItem("collapsedGroups");
+      const collapsedGroups: Record<string, boolean> = rawCollapsed
+        ? JSON.parse(rawCollapsed)
+        : {};
+
+      const rawCustom = localStorage.getItem("customOrderGroups");
+      const customOrderGroups: Record<string, boolean> = rawCustom
+        ? JSON.parse(rawCustom)
+        : {};
+
+      set({ dateFilter, collapsedGroups, customOrderGroups });
+    } catch {
+      // Ignore storage errors
+    }
+  },
 }));

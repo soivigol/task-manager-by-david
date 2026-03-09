@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useAppStore, type DateFilter } from "@/lib/store/app-store";
 import { SearchIcon, PlusIcon } from "@/components/ui/Icons";
@@ -33,6 +34,11 @@ export function Header() {
   const dateFilter = useAppStore((s) => s.dateFilter);
   const setDateFilter = useAppStore((s) => s.setDateFilter);
   const openTaskModal = useAppStore((s) => s.openTaskModal);
+  const hydrateFromStorage = useAppStore((s) => s.hydrateFromStorage);
+
+  useEffect(() => {
+    hydrateFromStorage();
+  }, [hydrateFromStorage]);
 
   const isTasksPage = pathname === "/tasks" || pathname.startsWith("/tasks/");
   const badge = getBadgeLabel(pathname);
