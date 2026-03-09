@@ -2,8 +2,8 @@
 
 | # | Phase | Status | Completed |
 |---|-------|--------|-----------|
-| 1 | Scaffolding & Auth | 👀 In Review | — |
-| 2 | Layout & Navigation | ❌ Not Started | — |
+| 1 | Scaffolding & Auth | ✅ Complete | — |
+| 2 | Layout & Navigation | 👀 In Review | — |
 | 3 | Settings & Task List Foundation | ❌ Not Started | — |
 | 4 | Task Modal (Create + Edit + Delete) | ❌ Not Started | — |
 | 5 | Subtasks | ❌ Not Started | — |
