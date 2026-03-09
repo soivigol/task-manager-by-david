@@ -8,6 +8,16 @@ import { StatusPicker } from './StatusPicker'
 import { TaskModal } from './TaskModal'
 import { TimePopup } from './TimePopup'
 import { ToastContainer } from '@/components/ui/Toast'
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import { arrayMove } from '@dnd-kit/sortable'
+import { reorderTasks } from '@/lib/api/tasks'
 
 interface TaskListClientProps {
   initialTasks: Task[]
@@ -30,11 +40,20 @@ export function TaskListClient({
   const picker = useAppStore((s) => s.picker)
   const closePicker = useAppStore((s) => s.closePicker)
 
+  const reorderTasksOptimistic = useAppStore((s) => s.reorderTasksOptimistic)
+
   const [timePop, setTimePop] = useState<{ taskId: string; taskTitle: string } | null>(null)
 
   const handleTimeClick = useCallback((taskId: string, taskTitle: string) => {
     setTimePop({ taskId, taskTitle })
   }, [])
+
+  // Require 5px movement before drag activates — prevents accidental drags on clicks
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 5 },
+    })
+  )
 
   // Populate store on mount / when server data changes
   useEffect(() => {
@@ -82,6 +101,44 @@ export function TaskListClient({
     return () => window.removeEventListener('click', handler)
   }, [picker, closePicker])
 
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event
+      if (!over || active.id === over.id) return
+
+      const activeId = active.id as string
+      const overId = over.id as string
+
+      // Find which status group the active task belongs to
+      const activeTask = tasks.find((t) => t.id === activeId && !t.parent_id)
+      const overTask = tasks.find((t) => t.id === overId && !t.parent_id)
+      if (!activeTask || !overTask) return
+
+      // Only allow reorder within the same status group
+      if (activeTask.status_id !== overTask.status_id) return
+
+      const statusId = activeTask.status_id
+      const groupTasks = tasksByStatus[statusId] ?? []
+      const oldIndex = groupTasks.findIndex((t) => t.id === activeId)
+      const newIndex = groupTasks.findIndex((t) => t.id === overId)
+      if (oldIndex === -1 || newIndex === -1) return
+
+      const reordered = arrayMove(groupTasks, oldIndex, newIndex)
+      const orderedIds = reordered.map((t) => t.id)
+
+      // Optimistic update
+      reorderTasksOptimistic(statusId, orderedIds)
+
+      // Persist to server
+      reorderTasks(statusId, orderedIds).catch(() => {
+        // On error, revert by re-setting from original order
+        const revertIds = groupTasks.map((t) => t.id)
+        reorderTasksOptimistic(statusId, revertIds)
+      })
+    },
+    [tasks, tasksByStatus, reorderTasksOptimistic]
+  )
+
   if (statuses.length === 0) {
     return (
       <div className="p-8 text-center text-gray-400 text-[13px]">
@@ -91,40 +148,46 @@ export function TaskListClient({
   }
 
   return (
-    <div className="px-3 py-2">
-      {statuses.map((status) => (
-        <StatusGroup
-          key={status.id}
-          status={status}
-          tasks={tasksByStatus[status.id] ?? []}
-          subtasksMap={subtasksMap}
-          clients={clients}
-          statuses={statuses}
-          search={search}
-          onTimeClick={handleTimeClick}
-        />
-      ))}
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="px-3 py-2">
+        {statuses.map((status) => (
+          <StatusGroup
+            key={status.id}
+            status={status}
+            tasks={tasksByStatus[status.id] ?? []}
+            subtasksMap={subtasksMap}
+            clients={clients}
+            statuses={statuses}
+            search={search}
+            onTimeClick={handleTimeClick}
+          />
+        ))}
 
-      {picker && (
-        <StatusPicker
-          currentStatusId={picker.currentStatusId}
-          taskId={picker.taskId}
-          statuses={statuses}
-          pos={{ x: picker.x, y: picker.y }}
-        />
-      )}
+        {picker && (
+          <StatusPicker
+            currentStatusId={picker.currentStatusId}
+            taskId={picker.taskId}
+            statuses={statuses}
+            pos={{ x: picker.x, y: picker.y }}
+          />
+        )}
 
-      <TaskModal />
+        <TaskModal />
 
-      {timePop && (
-        <TimePopup
-          taskId={timePop.taskId}
-          taskTitle={timePop.taskTitle}
-          onClose={() => setTimePop(null)}
-        />
-      )}
+        {timePop && (
+          <TimePopup
+            taskId={timePop.taskId}
+            taskTitle={timePop.taskTitle}
+            onClose={() => setTimePop(null)}
+          />
+        )}
 
-      <ToastContainer />
-    </div>
+        <ToastContainer />
+      </div>
+    </DndContext>
   )
 }

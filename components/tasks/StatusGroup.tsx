@@ -6,6 +6,7 @@ import { useAppStore } from '@/lib/store/app-store'
 import { TaskRow } from './TaskRow'
 import { ChevronIcon, PlusIcon } from '@/components/ui/Icons'
 import { fmt } from '@/lib/utils'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 
 const GRID = 'minmax(0, 1fr) 96px 30px 78px 78px 86px'
 
@@ -79,40 +80,46 @@ export function StatusGroup({
           </div>
 
           {/* Task rows */}
-          {filtered.map((task) => {
-            const subs = subtasksMap[task.id] ?? []
-            const isExp = expanded[task.id] ?? false
-            return (
-              <div key={task.id}>
-                <TaskRow
-                  task={task}
-                  clients={clients}
-                  statuses={statuses}
-                  isSubtask={false}
-                  hasSubtasks={subs.length > 0}
-                  expanded={isExp}
-                  onToggle={() =>
-                    setExpanded((prev) => ({ ...prev, [task.id]: !prev[task.id] }))
-                  }
-                  onTimeClick={onTimeClick}
-                />
-                {isExp &&
-                  subs.map((sub) => (
-                    <TaskRow
-                      key={sub.id}
-                      task={sub}
-                      clients={clients}
-                      statuses={statuses}
-                      isSubtask={true}
-                      hasSubtasks={false}
-                      expanded={false}
-                      onToggle={() => {}}
-                      onTimeClick={onTimeClick}
-                    />
-                  ))}
-              </div>
-            )
-          })}
+          <SortableContext
+            items={filtered.map((t) => t.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            {filtered.map((task) => {
+              const subs = subtasksMap[task.id] ?? []
+              const isExp = expanded[task.id] ?? false
+              return (
+                <div key={task.id}>
+                  <TaskRow
+                    task={task}
+                    clients={clients}
+                    statuses={statuses}
+                    isSubtask={false}
+                    hasSubtasks={subs.length > 0}
+                    expanded={isExp}
+                    onToggle={() =>
+                      setExpanded((prev) => ({ ...prev, [task.id]: !prev[task.id] }))
+                    }
+                    onTimeClick={onTimeClick}
+                    sortableId={task.id}
+                  />
+                  {isExp &&
+                    subs.map((sub) => (
+                      <TaskRow
+                        key={sub.id}
+                        task={sub}
+                        clients={clients}
+                        statuses={statuses}
+                        isSubtask={true}
+                        hasSubtasks={false}
+                        expanded={false}
+                        onToggle={() => {}}
+                        onTimeClick={onTimeClick}
+                      />
+                    ))}
+                </div>
+              )
+            })}
+          </SortableContext>
 
           {/* Add task button */}
           <button

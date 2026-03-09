@@ -1,12 +1,14 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, forwardRef } from 'react'
 import type { Task, Status, Client, Priority } from '@/types/app.types'
 import { useAppStore } from '@/lib/store/app-store'
 import { updateTask } from '@/lib/api/tasks'
 import { ChevronIcon, PlusIcon, GripIcon, ClockIcon, RepeatIcon } from '@/components/ui/Icons'
 import { fmt, fmtDate } from '@/lib/utils'
 import { recurrenceLabel } from '@/lib/recurrence'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
 const GRID = 'minmax(0, 1fr) 96px 30px 78px 78px 86px'
 
@@ -26,6 +28,7 @@ interface TaskRowProps {
   expanded: boolean
   onToggle: () => void
   onTimeClick: (taskId: string, taskTitle: string) => void
+  sortableId?: string
 }
 
 export function TaskRow({
@@ -37,10 +40,31 @@ export function TaskRow({
   expanded,
   onToggle,
   onTimeClick,
+  sortableId,
 }: TaskRowProps) {
   const openTaskModal = useAppStore((s) => s.openTaskModal)
   const openPicker = useAppStore((s) => s.openPicker)
   const updateTaskOptimistic = useAppStore((s) => s.updateTaskOptimistic)
+
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: sortableId ?? task.id,
+    disabled: isSubtask,
+  })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.4 : undefined,
+    zIndex: isDragging ? 50 : undefined,
+    position: isDragging ? 'relative' as const : undefined,
+  }
 
   const [notes, setNotes] = useState(task.quick_notes ?? '')
 
@@ -82,7 +106,12 @@ export function TaskRow({
   }, [notes, task.id, task.quick_notes, updateTaskOptimistic])
 
   return (
-    <div className="group border-b border-gray-100/60 hover:bg-[#f8f9fb] transition-colors">
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      className="group border-b border-gray-100/60 hover:bg-[#f8f9fb] transition-colors"
+    >
       <div
         className="grid items-center h-[35px]"
         style={{ gridTemplateColumns: GRID }}
@@ -94,7 +123,10 @@ export function TaskRow({
           }`}
         >
           {!isSubtask && (
-            <div className="w-[16px] shrink-0 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-grab">
+            <div
+              className="w-[16px] shrink-0 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-grab"
+              {...listeners}
+            >
               <GripIcon />
             </div>
           )}

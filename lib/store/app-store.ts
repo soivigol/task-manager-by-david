@@ -41,6 +41,7 @@ interface AppState {
   updateTaskOptimistic: (id: string, updates: Partial<Task>) => void;
   addTaskOptimistic: (task: Task) => void;
   removeTaskOptimistic: (id: string) => void;
+  reorderTasksOptimistic: (statusId: string, orderedIds: string[]) => void;
 
   // UI actions
   openTaskModal: (taskId?: string, defaultStatusId?: string, parentTaskId?: string) => void;
@@ -90,6 +91,15 @@ export const useAppStore = create<AppState>((set) => ({
   removeTaskOptimistic: (id) =>
     set((state) => ({
       tasks: state.tasks.filter((t) => t.id !== id && t.parent_id !== id),
+    })),
+  reorderTasksOptimistic: (statusId, orderedIds) =>
+    set((state) => ({
+      tasks: state.tasks.map((t) => {
+        if (t.status_id !== statusId || t.parent_id !== null) return t;
+        const idx = orderedIds.indexOf(t.id);
+        if (idx === -1) return t;
+        return { ...t, sort_order: idx };
+      }),
     })),
 
   // UI actions

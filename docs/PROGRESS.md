@@ -8,8 +8,8 @@
 | 4 | Task Modal (Create + Edit + Delete) | ✅ Complete | — |
 | 5 | Subtasks | ✅ Complete | — |
 | 6 | Time Tracking + Prepaid | ✅ Complete | — |
-| 7 | Recurring Tasks | 👀 In Review | — |
-| 8 | Drag & Drop + Ordering | ❌ Not Started | — |
+| 7 | Recurring Tasks | ✅ Complete | — |
+| 8 | Drag & Drop + Ordering | 👀 In Review | — |
 | 9 | Rich Editor + Reports + PDF | ❌ Not Started | — |
 | 10 | Polish + Deploy | ❌ Not Started | — |
 
