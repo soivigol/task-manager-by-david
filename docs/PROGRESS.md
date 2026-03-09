@@ -6,8 +6,8 @@
 | 2 | Layout & Navigation | ✅ Complete | — |
 | 3 | Settings & Task List Foundation | ✅ Complete | — |
 | 4 | Task Modal (Create + Edit + Delete) | ✅ Complete | — |
-| 5 | Subtasks | 👀 In Review | — |
-| 6 | Time Tracking + Prepaid | ❌ Not Started | — |
+| 5 | Subtasks | ✅ Complete | — |
+| 6 | Time Tracking + Prepaid | 👀 In Review | — |
 | 7 | Recurring Tasks | ❌ Not Started | — |
 | 8 | Drag & Drop + Ordering | ❌ Not Started | — |
 | 9 | Rich Editor + Reports + PDF | ❌ Not Started | — |

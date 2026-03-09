@@ -1,7 +1,8 @@
-export default function ClientsPage() {
-  return (
-    <div className="p-4">
-      <p className="text-sm text-gray-500">Clients page coming in Phase 6</p>
-    </div>
-  );
+import { getClientsWithStats } from '@/lib/api/clients'
+import { ClientsPageClient } from '@/components/clients/ClientsPageClient'
+
+export default async function ClientsPage() {
+  const clients = await getClientsWithStats()
+
+  return <ClientsPageClient initialClients={clients} />
 }

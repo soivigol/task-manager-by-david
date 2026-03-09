@@ -16,6 +16,7 @@ interface StatusGroupProps {
   clients: Client[]
   statuses: Status[]
   search: string
+  onTimeClick: (taskId: string, taskTitle: string) => void
 }
 
 export function StatusGroup({
@@ -25,6 +26,7 @@ export function StatusGroup({
   clients,
   statuses,
   search,
+  onTimeClick,
 }: StatusGroupProps) {
   const [collapsed, setCollapsed] = useState(false)
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
@@ -92,6 +94,7 @@ export function StatusGroup({
                   onToggle={() =>
                     setExpanded((prev) => ({ ...prev, [task.id]: !prev[task.id] }))
                   }
+                  onTimeClick={onTimeClick}
                 />
                 {isExp &&
                   subs.map((sub) => (
@@ -104,6 +107,7 @@ export function StatusGroup({
                       hasSubtasks={false}
                       expanded={false}
                       onToggle={() => {}}
+                      onTimeClick={onTimeClick}
                     />
                   ))}
               </div>

@@ -24,6 +24,7 @@ interface TaskRowProps {
   hasSubtasks: boolean
   expanded: boolean
   onToggle: () => void
+  onTimeClick: (taskId: string, taskTitle: string) => void
 }
 
 export function TaskRow({
@@ -34,6 +35,7 @@ export function TaskRow({
   hasSubtasks,
   expanded,
   onToggle,
+  onTimeClick,
 }: TaskRowProps) {
   const openTaskModal = useAppStore((s) => s.openTaskModal)
   const openPicker = useAppStore((s) => s.openPicker)
@@ -162,10 +164,16 @@ export function TaskRow({
         </div>
 
         {/* COL 4: Time */}
-        <div className="flex items-center justify-center gap-1 text-[12px] text-gray-400 hover:text-cyan-600 transition-colors h-full cursor-pointer">
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            onTimeClick(task.id, task.title)
+          }}
+          className="flex items-center justify-center gap-1 text-[12px] text-gray-400 hover:text-cyan-600 transition-colors h-full"
+        >
           <ClockIcon />
           <span>{fmt(task.total_tracked_minutes)}</span>
-        </div>
+        </button>
 
         {/* COL 5: Client */}
         <div className="flex items-center justify-center">

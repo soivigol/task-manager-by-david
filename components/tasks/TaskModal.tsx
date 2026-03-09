@@ -1,12 +1,14 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
-import type { Priority, RecurrenceType } from '@/types/app.types'
+import type { Priority, RecurrenceType, TimeEntry } from '@/types/app.types'
 import { useAppStore } from '@/lib/store/app-store'
 import { createTask, updateTask, deleteTask } from '@/lib/api/tasks'
+import { getTimeEntries, deleteTimeEntry } from '@/lib/api/time-entries'
 import { Modal } from '@/components/ui/Modal'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
-import { TrashIcon, XIcon, RepeatIcon } from '@/components/ui/Icons'
+import { TrashIcon, XIcon, RepeatIcon, ClockIcon } from '@/components/ui/Icons'
+import { fmt, fmtDate } from '@/lib/utils'
 
 const PRIORITY_OPTIONS: { value: Priority; label: string }[] = [
   { value: 'urgent', label: 'Urgent' },
@@ -83,6 +85,8 @@ export function TaskModal() {
 
   const [showConfirm, setShowConfirm] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [timeEntries, setTimeEntries] = useState<TimeEntry[]>([])
+  const [loadingEntries, setLoadingEntries] = useState(false)
   const titleRef = useRef<HTMLInputElement>(null)
 
   // Initialize form when modal opens
@@ -126,10 +130,35 @@ export function TaskModal() {
 
     setShowConfirm(false)
     setSaving(false)
+    setTimeEntries([])
+    setLoadingEntries(false)
 
     // Focus title after a tick
     setTimeout(() => titleRef.current?.focus(), 50)
   }, [isOpen, existingTask, defaultStatus])
+
+  // Load time entries for existing tasks
+  useEffect(() => {
+    if (!isOpen || isNewTask || !selectedTaskId) return
+
+    let cancelled = false
+    setLoadingEntries(true)
+
+    getTimeEntries(selectedTaskId)
+      .then((entries) => {
+        if (!cancelled) setTimeEntries(entries)
+      })
+      .catch(() => {
+        // silently fail — entries just won't show
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingEntries(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [isOpen, isNewTask, selectedTaskId])
 
   const setField = useCallback(
     <K extends keyof TaskFormData>(key: K, value: TaskFormData[K]) => {
@@ -272,6 +301,40 @@ export function TaskModal() {
       const message =
         err instanceof Error ? err.message : 'Failed to delete task'
       addToast(message, 'error')
+    }
+  }
+
+  const handleDeleteTimeEntry = async (entryId: string, entryMinutes: number) => {
+    // Optimistic: remove from local list
+    setTimeEntries((prev) => prev.filter((e) => e.id !== entryId))
+
+    // Optimistic: update task total
+    if (selectedTaskId) {
+      const currentTask = tasks.find((t) => t.id === selectedTaskId)
+      if (currentTask) {
+        updateTaskOptimistic(selectedTaskId, {
+          total_tracked_minutes: Math.max(0, currentTask.total_tracked_minutes - entryMinutes),
+        })
+      }
+    }
+
+    try {
+      await deleteTimeEntry(entryId)
+      addToast('Time entry deleted', 'success')
+      // Refetch entries to get accurate data
+      if (selectedTaskId) {
+        const fresh = await getTimeEntries(selectedTaskId)
+        setTimeEntries(fresh)
+      }
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : 'Failed to delete time entry'
+      addToast(message, 'error')
+      // Refetch to revert
+      if (selectedTaskId) {
+        const fresh = await getTimeEntries(selectedTaskId)
+        setTimeEntries(fresh)
+      }
     }
   }
 
@@ -554,6 +617,48 @@ export function TaskModal() {
               className="w-full border border-gray-200 rounded-lg px-3 py-[7px] text-[13px] focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 resize-none"
             />
           </div>
+
+          {/* Time Entries (edit mode only) */}
+          {!isNewTask && selectedTaskId && (
+            <div>
+              <label className="text-[10px] font-semibold text-gray-400 mb-2 uppercase tracking-wider flex items-center gap-1">
+                <ClockIcon size={10} /> Time Entries
+              </label>
+              {loadingEntries && (
+                <p className="text-[11px] text-gray-400 py-2">Loading...</p>
+              )}
+              {!loadingEntries && timeEntries.length === 0 && (
+                <p className="text-[11px] text-gray-400 py-2">No time entries yet.</p>
+              )}
+              {!loadingEntries && timeEntries.length > 0 && (
+                <div className="space-y-1">
+                  {timeEntries.map((entry) => (
+                    <div
+                      key={entry.id}
+                      className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-1.5 group/entry"
+                    >
+                      <span className="text-[11px] text-gray-500 shrink-0">
+                        {fmtDate(entry.tracked_date)}
+                      </span>
+                      <span className="text-[11px] text-gray-600 flex-1 truncate">
+                        {entry.description || '—'}
+                      </span>
+                      <span className="text-[11px] font-mono font-medium text-gray-700 shrink-0">
+                        {fmt(entry.minutes)}
+                      </span>
+                      <button
+                        onClick={() => handleDeleteTimeEntry(entry.id, entry.minutes)}
+                        className="opacity-0 group-hover/entry:opacity-100 text-gray-300 hover:text-red-500 transition-all shrink-0"
+                        title="Delete time entry"
+                      >
+                        <TrashIcon size={11} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </Modal>
 

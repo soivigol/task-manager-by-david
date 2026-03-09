@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState, useCallback } from 'react'
 import type { Task, Status, Client } from '@/types/app.types'
 import { useAppStore } from '@/lib/store/app-store'
 import { StatusGroup } from './StatusGroup'
 import { StatusPicker } from './StatusPicker'
 import { TaskModal } from './TaskModal'
+import { TimePopup } from './TimePopup'
 
 interface TaskListClientProps {
   initialTasks: Task[]
@@ -27,6 +28,12 @@ export function TaskListClient({
   const search = useAppStore((s) => s.search)
   const picker = useAppStore((s) => s.picker)
   const closePicker = useAppStore((s) => s.closePicker)
+
+  const [timePop, setTimePop] = useState<{ taskId: string; taskTitle: string } | null>(null)
+
+  const handleTimeClick = useCallback((taskId: string, taskTitle: string) => {
+    setTimePop({ taskId, taskTitle })
+  }, [])
 
   // Populate store on mount / when server data changes
   useEffect(() => {
@@ -93,6 +100,7 @@ export function TaskListClient({
           clients={clients}
           statuses={statuses}
           search={search}
+          onTimeClick={handleTimeClick}
         />
       ))}
 
@@ -106,6 +114,14 @@ export function TaskListClient({
       )}
 
       <TaskModal />
+
+      {timePop && (
+        <TimePopup
+          taskId={timePop.taskId}
+          taskTitle={timePop.taskTitle}
+          onClose={() => setTimePop(null)}
+        />
+      )}
     </div>
   )
 }
