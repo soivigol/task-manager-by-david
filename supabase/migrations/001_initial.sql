@@ -79,12 +79,23 @@ CREATE TABLE tasks (
   updated_at            timestamptz NOT NULL DEFAULT now()
 );
 
--- Max 1 level deep: parent_id must itself have no parent
-ALTER TABLE tasks ADD CONSTRAINT tasks_max_depth CHECK (
-  parent_id IS NULL OR NOT EXISTS (
-    SELECT 1 FROM tasks t WHERE t.id = tasks.parent_id AND t.parent_id IS NOT NULL
-  )
-);
+-- Max 1 level deep: parent_id must itself have no parent (enforced via trigger)
+CREATE OR REPLACE FUNCTION enforce_max_subtask_depth()
+RETURNS trigger AS $$
+BEGIN
+  IF NEW.parent_id IS NOT NULL THEN
+    IF EXISTS (SELECT 1 FROM tasks WHERE id = NEW.parent_id AND parent_id IS NOT NULL) THEN
+      RAISE EXCEPTION 'Subtasks cannot have subtasks (max 1 level deep)';
+    END IF;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_enforce_max_subtask_depth
+  BEFORE INSERT OR UPDATE ON tasks
+  FOR EACH ROW
+  EXECUTE FUNCTION enforce_max_subtask_depth();
 
 CREATE INDEX idx_tasks_user_status ON tasks (user_id, status_id);
 CREATE INDEX idx_tasks_parent ON tasks (parent_id) WHERE parent_id IS NOT NULL;
@@ -195,3 +206,18 @@ CREATE TRIGGER trg_prepaid_deduct
   AFTER INSERT ON time_entries
   FOR EACH ROW
   EXECUTE FUNCTION deduct_prepaid();
+
+-- ─── Trigger: auto-create profile on auth.users insert ────
+CREATE OR REPLACE FUNCTION handle_new_user()
+RETURNS trigger AS $$
+BEGIN
+  INSERT INTO public.profiles (id, full_name)
+  VALUES (NEW.id, COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.email, 'User'));
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW
+  EXECUTE FUNCTION handle_new_user();

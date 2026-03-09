@@ -2,13 +2,13 @@
 
 import { useState, useMemo } from 'react'
 import type { Task, Status, Client } from '@/types/app.types'
-import { useAppStore } from '@/lib/store/app-store'
+import { useAppStore, type DateFilter } from '@/lib/store/app-store'
 import { TaskRow } from './TaskRow'
 import { ChevronIcon, PlusIcon } from '@/components/ui/Icons'
 import { fmt } from '@/lib/utils'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 
-const GRID = 'minmax(0, 1fr) 96px 30px 78px 78px 86px'
+const GRID = 'minmax(0, 1fr) 100px 34px 84px 90px 100px'
 
 interface StatusGroupProps {
   status: Status
@@ -29,15 +29,31 @@ export function StatusGroup({
   search,
   onTimeClick,
 }: StatusGroupProps) {
-  const [collapsed, setCollapsed] = useState(false)
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
+  const collapsed = useAppStore((s) => s.collapsedGroups[status.id] ?? false)
+  const toggleGroupCollapsed = useAppStore((s) => s.toggleGroupCollapsed)
+  const dateFilter = useAppStore((s) => s.dateFilter)
   const openTaskModal = useAppStore((s) => s.openTaskModal)
 
   const filtered = useMemo(() => {
-    if (!search) return tasks
-    const q = search.toLowerCase()
-    return tasks.filter((t) => t.title.toLowerCase().includes(q))
-  }, [tasks, search])
+    let result = tasks
+
+    // Date filter by due_date
+    if (dateFilter !== 'all') {
+      const now = new Date()
+      const cutoff = new Date(now.getFullYear(), now.getMonth() - (dateFilter === '1m' ? 1 : dateFilter === '3m' ? 3 : 6), now.getDate())
+      const cutoffStr = cutoff.toISOString().slice(0, 10)
+      result = result.filter((t) => !t.due_date || t.due_date >= cutoffStr)
+    }
+
+    // Search filter
+    if (search) {
+      const q = search.toLowerCase()
+      result = result.filter((t) => t.title.toLowerCase().includes(q))
+    }
+
+    return result
+  }, [tasks, search, dateFilter])
 
   const total = filtered.reduce((sum, t) => sum + (t.total_tracked_minutes || 0), 0)
 
@@ -45,8 +61,8 @@ export function StatusGroup({
     <div className="mb-0.5">
       {/* Status header */}
       <div
-        className="flex items-center gap-2 h-[30px] pl-2 cursor-pointer select-none hover:bg-gray-50/80 rounded transition-colors"
-        onClick={() => setCollapsed(!collapsed)}
+        className="flex items-center gap-2 h-[36px] pl-2 cursor-pointer select-none hover:bg-gray-50/80 rounded transition-colors"
+        onClick={() => toggleGroupCollapsed(status.id)}
       >
         <span
           className="text-gray-400 transition-transform duration-150"
@@ -55,20 +71,20 @@ export function StatusGroup({
           <ChevronIcon down size={10} />
         </span>
         <span
-          className="text-[10px] font-bold tracking-wide px-[7px] py-[2px] rounded text-white leading-none"
+          className="text-[11px] font-bold tracking-wide px-[8px] py-[3px] rounded text-white leading-none"
           style={{ backgroundColor: status.color }}
         >
           {status.name}
         </span>
-        <span className="text-[10px] text-gray-400 font-medium">{filtered.length}</span>
-        {total > 0 && <span className="text-[10px] text-gray-400">{fmt(total)}</span>}
+        <span className="text-[12px] text-gray-400 font-medium">{filtered.length}</span>
+        {total > 0 && <span className="text-[12px] text-gray-400">{fmt(total)}</span>}
       </div>
 
       {!collapsed && (
         <>
           {/* Column headers */}
           <div
-            className="grid items-center h-[22px] text-[9px] font-bold text-gray-400 uppercase tracking-[0.06em] border-b border-gray-200/50"
+            className="grid items-center h-[26px] text-[10px] font-bold text-gray-400 uppercase tracking-[0.06em] border-b border-gray-200/50"
             style={{ gridTemplateColumns: GRID }}
           >
             <div className="pl-[60px]">Name</div>
@@ -81,14 +97,14 @@ export function StatusGroup({
 
           {/* Empty state when search yields no results in this group */}
           {search && filtered.length === 0 && tasks.length > 0 && (
-            <div className="py-3 pl-[60px] text-[11px] text-gray-400">
+            <div className="py-3 pl-[60px] text-[12px] text-gray-400">
               No matching tasks
             </div>
           )}
 
           {/* Empty state when group has no tasks at all */}
           {!search && filtered.length === 0 && (
-            <div className="py-3 pl-[60px] text-[11px] text-gray-400">
+            <div className="py-3 pl-[60px] text-[12px] text-gray-400">
               No tasks &mdash;{' '}
               <button
                 onClick={() => openTaskModal(undefined, status.id)}
@@ -144,7 +160,7 @@ export function StatusGroup({
           {/* Add task button */}
           <button
             onClick={() => openTaskModal(undefined, status.id)}
-            className="flex items-center gap-1 text-gray-400 hover:text-gray-600 text-[11px] py-1.5 pl-[60px] transition-colors w-full text-left"
+            className="flex items-center gap-1 text-gray-400 hover:text-gray-600 text-[12px] py-2 pl-[60px] transition-colors w-full text-left"
           >
             <PlusIcon size={10} /> Add Task
           </button>

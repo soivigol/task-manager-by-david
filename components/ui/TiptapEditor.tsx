@@ -39,6 +39,7 @@ function ToolbarButton({
 
 export function TiptapEditor({ content, onChange }: TiptapEditorProps) {
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         heading: { levels: [2] },

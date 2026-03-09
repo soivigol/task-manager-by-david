@@ -1,7 +1,29 @@
 'use client'
 
 import { useEffect, useMemo, useState, useCallback } from 'react'
-import type { Task, Status, Client } from '@/types/app.types'
+import type { Task, Status, Client, Priority } from '@/types/app.types'
+
+const PRIORITY_ORDER: Record<Priority, number> = {
+  urgent: 0,
+  high: 1,
+  normal: 2,
+  low: 3,
+}
+
+function compareTasks(a: Task, b: Task): number {
+  // Priority first (urgent → low)
+  const pa = PRIORITY_ORDER[a.priority] ?? 2
+  const pb = PRIORITY_ORDER[b.priority] ?? 2
+  if (pa !== pb) return pa - pb
+
+  // Then due date descending (newest first, nulls last)
+  if (a.due_date && b.due_date) return b.due_date.localeCompare(a.due_date)
+  if (a.due_date) return -1
+  if (b.due_date) return 1
+
+  // Fallback to sort_order
+  return a.sort_order - b.sort_order
+}
 import { useAppStore } from '@/lib/store/app-store'
 import { StatusGroup } from './StatusGroup'
 import { StatusPicker } from './StatusPicker'
@@ -91,7 +113,7 @@ export function TaskListClient({
     for (const status of statuses) {
       byStatus[status.id] = topLevel
         .filter((t) => t.status_id === status.id)
-        .sort((a, b) => a.sort_order - b.sort_order)
+        .sort(compareTasks)
     }
 
     return { tasksByStatus: byStatus, subtasksMap: sMap }

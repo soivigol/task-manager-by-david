@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react'
 import type { Status } from '@/types/app.types'
-import { createStatus, updateStatus, deleteStatus } from '@/lib/api/statuses'
+import { createStatus, updateStatus, deleteStatus, reorderStatuses } from '@/lib/api/statuses'
 import { TrashIcon } from '@/components/ui/Icons'
 
 interface StatusSettingsProps {
@@ -79,16 +79,49 @@ export function StatusSettings({ initialStatuses, taskCountByStatus }: StatusSet
     }
   }
 
+  const moveStatus = async (index: number, direction: -1 | 1) => {
+    const target = index + direction
+    if (target < 0 || target >= statuses.length) return
+    const reordered = [...statuses]
+    const [moved] = reordered.splice(index, 1)
+    reordered.splice(target, 0, moved)
+    setStatuses(reordered)
+    try {
+      await reorderStatuses(reordered.map(s => s.id))
+    } catch (err) {
+      setStatuses(statuses) // revert
+      setError(err instanceof Error ? err.message : 'Failed to reorder')
+    }
+  }
+
   return (
     <div className="space-y-2">
       {error && (
         <div className="text-[11px] text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</div>
       )}
 
-      {statuses.map(status => {
+      {statuses.map((status, index) => {
         const taskCount = taskCountByStatus[status.id] ?? 0
         return (
           <div key={status.id} className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
+            <div className="flex flex-col -my-1">
+              <button
+                onClick={() => moveStatus(index, -1)}
+                disabled={index === 0}
+                className="text-gray-400 hover:text-gray-600 disabled:text-gray-200 disabled:cursor-not-allowed transition-colors p-0 leading-none"
+                title="Move up"
+              >
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 2L1 7h8L5 2z" fill="currentColor"/></svg>
+              </button>
+              <button
+                onClick={() => moveStatus(index, 1)}
+                disabled={index === statuses.length - 1}
+                className="text-gray-400 hover:text-gray-600 disabled:text-gray-200 disabled:cursor-not-allowed transition-colors p-0 leading-none"
+                title="Move down"
+              >
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 8L1 3h8L5 8z" fill="currentColor"/></svg>
+              </button>
+            </div>
             <span
               className="w-3 h-3 rounded-full shrink-0"
               style={{ backgroundColor: status.color }}

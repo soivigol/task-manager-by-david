@@ -14,6 +14,8 @@ interface PickerState {
   y: number;
 }
 
+export type DateFilter = "1m" | "3m" | "6m" | "all";
+
 interface AppState {
   // Data
   tasks: Task[];
@@ -30,6 +32,8 @@ interface AppState {
   confirmDialog: { taskId: string; taskTitle: string } | null;
   toasts: Toast[];
   picker: PickerState | null;
+  collapsedGroups: Record<string, boolean>;
+  dateFilter: DateFilter;
 
   // Data actions
   setTasks: (tasks: Task[]) => void;
@@ -52,6 +56,37 @@ interface AppState {
   closePicker: () => void;
   addToast: (message: string, type?: Toast["type"]) => void;
   removeToast: (id: string) => void;
+  toggleGroupCollapsed: (statusId: string) => void;
+  setDateFilter: (filter: DateFilter) => void;
+}
+
+function loadDateFilter(): DateFilter {
+  if (typeof window === "undefined") return "all";
+  try {
+    const raw = localStorage.getItem("dateFilter");
+    if (raw === "1m" || raw === "3m" || raw === "6m" || raw === "all") return raw;
+    return "all";
+  } catch {
+    return "all";
+  }
+}
+
+function loadCollapsedGroups(): Record<string, boolean> {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = localStorage.getItem("collapsedGroups");
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveCollapsedGroups(groups: Record<string, boolean>) {
+  try {
+    localStorage.setItem("collapsedGroups", JSON.stringify(groups));
+  } catch {
+    // Ignore storage errors
+  }
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -70,6 +105,8 @@ export const useAppStore = create<AppState>((set) => ({
   confirmDialog: null,
   toasts: [],
   picker: null,
+  collapsedGroups: loadCollapsedGroups(),
+  dateFilter: loadDateFilter(),
 
   // Data actions
   setTasks: (tasks) => set({ tasks }),
@@ -136,4 +173,21 @@ export const useAppStore = create<AppState>((set) => ({
     set((state) => ({
       toasts: state.toasts.filter((t) => t.id !== id),
     })),
+  setDateFilter: (filter) => {
+    try {
+      localStorage.setItem("dateFilter", filter);
+    } catch {
+      // Ignore storage errors
+    }
+    set({ dateFilter: filter });
+  },
+  toggleGroupCollapsed: (statusId) =>
+    set((state) => {
+      const next = {
+        ...state.collapsedGroups,
+        [statusId]: !state.collapsedGroups[statusId],
+      };
+      saveCollapsedGroups(next);
+      return { collapsedGroups: next };
+    }),
 }));

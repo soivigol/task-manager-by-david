@@ -10,7 +10,7 @@ import { recurrenceLabel } from '@/lib/recurrence'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
-const GRID = 'minmax(0, 1fr) 96px 30px 78px 78px 86px'
+const GRID = 'minmax(0, 1fr) 100px 34px 84px 90px 100px'
 
 const PRIORITY_MAP: Record<Priority, { label: string; color: string }> = {
   urgent: { label: 'Urgent', color: '#ef4444' },
@@ -113,7 +113,7 @@ export function TaskRow({
       className="group border-b border-gray-100/60 hover:bg-[#f8f9fb] transition-colors"
     >
       <div
-        className="grid items-center h-[35px]"
+        className="grid items-center h-[40px]"
         style={{ gridTemplateColumns: GRID }}
       >
         {/* COL 1: Name */}
@@ -160,13 +160,13 @@ export function TaskRow({
 
           <button
             onClick={() => openTaskModal(task.id)}
-            className="flex-1 min-w-0 text-left text-[13px] text-gray-800 hover:text-cyan-700 truncate pl-1 transition-colors"
+            className="flex-1 min-w-0 text-left text-[14px] text-gray-800 hover:text-cyan-700 truncate pl-1 transition-colors"
           >
             {task.title}
           </button>
 
           {!isSubtask && task.recurrence_type && (
-            <span className="shrink-0 inline-flex items-center gap-0.5 text-[10px] text-cyan-600 bg-cyan-50 rounded px-1.5 py-[1px] font-medium mr-0.5">
+            <span className="shrink-0 inline-flex items-center gap-0.5 text-[11px] text-cyan-600 bg-cyan-50 rounded px-1.5 py-[1px] font-medium mr-0.5">
               <RepeatIcon size={9} />
               {recurrenceLabel(task)}
             </span>
@@ -186,7 +186,7 @@ export function TaskRow({
         {/* COL 2: Due date */}
         <div className="text-right pr-2">
           <span
-            className={`text-[12px] ${
+            className={`text-[13px] ${
               isPastDue ? 'text-red-500 font-medium' : 'text-gray-500'
             }`}
           >
@@ -209,7 +209,7 @@ export function TaskRow({
             e.stopPropagation()
             onTimeClick(task.id, task.title)
           }}
-          className="flex items-center justify-center gap-1 text-[12px] text-gray-400 hover:text-cyan-600 transition-colors h-full"
+          className="flex items-center justify-center gap-1 text-[13px] text-gray-400 hover:text-cyan-600 transition-colors h-full"
         >
           <ClockIcon />
           <span>{fmt(task.total_tracked_minutes)}</span>
@@ -219,7 +219,7 @@ export function TaskRow({
         <div className="flex items-center justify-center">
           {client ? (
             <span
-              className="text-[10px] font-semibold px-[5px] py-[1px] rounded"
+              className="text-[11px] font-semibold px-[5px] py-[1px] rounded"
               style={{
                 backgroundColor: client.color + '16',
                 color: client.color,
@@ -228,7 +228,7 @@ export function TaskRow({
               {client.name}
             </span>
           ) : (
-            <span className="text-gray-300 text-[12px]">&mdash;</span>
+            <span className="text-gray-300 text-[13px]">&mdash;</span>
           )}
         </div>
 
@@ -239,7 +239,7 @@ export function TaskRow({
             onChange={(e) => setNotes(e.target.value)}
             onBlur={handleNotesSave}
             placeholder="&mdash;"
-            className="w-full text-[11px] text-gray-500 bg-transparent border-0 focus:outline-none focus:bg-white focus:ring-1 focus:ring-gray-200 rounded px-1 py-0.5 placeholder:text-gray-300 text-right"
+            className="w-full text-[12px] text-gray-500 bg-transparent border-0 focus:outline-none focus:bg-white focus:ring-1 focus:ring-gray-200 rounded px-1 py-0.5 placeholder:text-gray-300 text-right"
           />
         </div>
       </div>

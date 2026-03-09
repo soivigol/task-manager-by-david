@@ -28,6 +28,11 @@ body {
   font-family: 'DM Sans', system-ui, sans-serif;
 }
 
+button,
+[role="button"] {
+  cursor: pointer;
+}
+
 @keyframes toast-in {
   from {
     opacity: 0;
