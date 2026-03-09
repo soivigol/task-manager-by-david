@@ -5,8 +5,8 @@
 | 1 | Scaffolding & Auth | ✅ Complete | — |
 | 2 | Layout & Navigation | ✅ Complete | — |
 | 3 | Settings & Task List Foundation | ✅ Complete | — |
-| 4 | Task Modal (Create + Edit + Delete) | 👀 In Review | — |
-| 5 | Subtasks | ❌ Not Started | — |
+| 4 | Task Modal (Create + Edit + Delete) | ✅ Complete | — |
+| 5 | Subtasks | 👀 In Review | — |
 | 6 | Time Tracking + Prepaid | ❌ Not Started | — |
 | 7 | Recurring Tasks | ❌ Not Started | — |
 | 8 | Drag & Drop + Ordering | ❌ Not Started | — |
