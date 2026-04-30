@@ -189,7 +189,7 @@ export function TaskListClient({
 
   if (statuses.length === 0) {
     return (
-      <div className="p-8 text-center text-gray-400 text-[13px]">
+      <div className="p-8 text-center text-gray-400 dark:text-gray-500 text-[13px]">
         No statuses configured. Go to Settings to add statuses.
       </div>
     )
@@ -203,7 +203,7 @@ export function TaskListClient({
     >
       <div className="px-3 py-2">
         {search && !hasSearchResults && (
-          <div className="py-8 text-center text-gray-400 text-[13px]">
+          <div className="py-8 text-center text-gray-400 dark:text-gray-500 text-[13px]">
             No tasks match &lsquo;{search}&rsquo;
           </div>
         )}

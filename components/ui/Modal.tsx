@@ -57,15 +57,15 @@ export function Modal({
       onClick={handleOverlayClick}
       className="fixed inset-0 z-[400] flex items-center justify-center"
     >
-      <div className="fixed inset-0 bg-black/20 backdrop-blur-[1px]" />
+      <div className="fixed inset-0 bg-black/20 dark:bg-black/60 backdrop-blur-[1px]" />
       <div
         ref={contentRef}
         tabIndex={-1}
-        className={`relative bg-white rounded-2xl shadow-2xl border border-gray-100 w-full ${maxW} max-h-[84vh] flex flex-col mx-4 outline-none`}
+        className={`relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800 w-full ${maxW} max-h-[84vh] flex flex-col mx-4 outline-none`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
-          <h2 className="text-[13px] font-semibold text-gray-800">{title}</h2>
+        <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 dark:border-gray-800">
+          <h2 className="text-[13px] font-semibold text-gray-800 dark:text-gray-200">{title}</h2>
           <div className="flex items-center gap-0.5">
             {headerRight}
           </div>
@@ -78,7 +78,7 @@ export function Modal({
 
         {/* Footer */}
         {footer && (
-          <div className="px-5 py-3 border-t border-gray-100 flex justify-end gap-2">
+          <div className="px-5 py-3 border-t border-gray-100 dark:border-gray-800 flex justify-end gap-2">
             {footer}
           </div>
         )}

@@ -31,7 +31,7 @@ export function ClientCard({ client, onOveragePaid }: ClientCardProps) {
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200/80 p-4 mb-2 hover:shadow-sm transition-shadow">
+    <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200/80 dark:border-gray-800 p-4 mb-2 hover:shadow-sm transition-shadow">
       {/* Header: name + total tracked */}
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-2">
@@ -39,14 +39,14 @@ export function ClientCard({ client, onOveragePaid }: ClientCardProps) {
             className="w-[10px] h-[10px] rounded"
             style={{ backgroundColor: client.color }}
           />
-          <h3 className="text-[13px] font-semibold text-gray-800">
+          <h3 className="text-[13px] font-semibold text-gray-800 dark:text-gray-200">
             {client.name}
           </h3>
-          <span className="text-[10px] text-gray-400">
+          <span className="text-[10px] text-gray-400 dark:text-gray-500">
             {client.task_count} task{client.task_count !== 1 ? 's' : ''}
           </span>
         </div>
-        <span className="text-[13px] font-mono font-semibold text-gray-700">
+        <span className="text-[13px] font-mono font-semibold text-gray-700 dark:text-gray-300">
           {fmt(client.total_tracked_minutes)}
         </span>
       </div>
@@ -55,11 +55,11 @@ export function ClientCard({ client, onOveragePaid }: ClientCardProps) {
       {hasPrepaid && (
         <div className="mt-1">
           <div className="flex justify-between text-[10px] mb-1">
-            <span className="text-gray-500 font-medium">Prepaid</span>
+            <span className="text-gray-500 dark:text-gray-400 font-medium">Prepaid</span>
             <div className="flex items-center gap-1.5">
               <span
                 className={`font-semibold ${
-                  isNegative ? 'text-red-500' : 'text-cyan-600'
+                  isNegative ? 'text-red-500' : 'text-cyan-600 dark:text-cyan-400'
                 }`}
               >
                 {fmt(client.prepaid_remaining_minutes)} /{' '}
@@ -69,7 +69,7 @@ export function ClientCard({ client, onOveragePaid }: ClientCardProps) {
                 <button
                   onClick={handleMarkPaid}
                   disabled={markingPaid}
-                  className="text-[9px] bg-red-50 text-red-600 px-1 py-0.5 rounded hover:bg-red-100 font-semibold disabled:opacity-50"
+                  className="text-[9px] bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-1 py-0.5 rounded hover:bg-red-100 dark:hover:bg-red-900/50 font-semibold disabled:opacity-50"
                 >
                   {markingPaid ? '...' : 'Mark paid'}
                 </button>
@@ -85,20 +85,20 @@ export function ClientCard({ client, onOveragePaid }: ClientCardProps) {
 
       {/* Task list */}
       {client.tasks.length > 0 && (
-        <div className="mt-2 pt-2 border-t border-gray-100 space-y-0.5">
+        <div className="mt-2 pt-2 border-t border-gray-100 dark:border-gray-800 space-y-0.5">
           {client.tasks.slice(0, 5).map((t) => (
             <div
               key={t.id}
               className="flex items-center justify-between text-[11px]"
             >
-              <span className="text-gray-600 truncate mr-2">{t.title}</span>
-              <span className="text-gray-400 font-mono shrink-0">
+              <span className="text-gray-600 dark:text-gray-400 truncate mr-2">{t.title}</span>
+              <span className="text-gray-400 dark:text-gray-500 font-mono shrink-0">
                 {fmt(t.total_tracked_minutes)}
               </span>
             </div>
           ))}
           {client.tasks.length > 5 && (
-            <p className="text-[10px] text-gray-400">
+            <p className="text-[10px] text-gray-400 dark:text-gray-500">
               +{client.tasks.length - 5} more
             </p>
           )}

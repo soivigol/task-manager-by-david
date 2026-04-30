@@ -353,10 +353,10 @@ export function TaskModal() {
 
   const headerRight = (
     <>
-      {!isNewTask && selectedTaskId && (
+        {!isNewTask && selectedTaskId && (
         <button
           onClick={() => setShowConfirm(true)}
-          className="text-gray-300 hover:text-red-500 p-1.5 rounded-lg hover:bg-red-50 transition-colors"
+          className="text-gray-300 dark:text-gray-600 hover:text-red-500 dark:hover:text-red-400 p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
           title="Delete task"
         >
           <TrashIcon />
@@ -364,7 +364,7 @@ export function TaskModal() {
       )}
       <button
         onClick={closeTaskModal}
-        className="text-gray-400 hover:text-gray-600 p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+        className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
       >
         <XIcon />
       </button>
@@ -375,14 +375,14 @@ export function TaskModal() {
     <>
       <button
         onClick={closeTaskModal}
-        className="px-3 py-[6px] text-[12px] text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+        className="px-3 py-[6px] text-[12px] text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
       >
         Cancel
       </button>
       <button
         onClick={handleSave}
         disabled={!form.title.trim() || saving}
-        className="px-4 py-[6px] text-[12px] font-medium text-white bg-[#1a1a2e] rounded-lg hover:bg-[#252540] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="px-4 py-[6px] text-[12px] font-medium text-white bg-[#1a1a2e] dark:bg-gray-700 rounded-lg hover:bg-[#252540] dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {saving ? 'Saving...' : isNewTask ? 'Create' : 'Save'}
       </button>
@@ -400,14 +400,14 @@ export function TaskModal() {
         <div className="px-5 py-4 space-y-3">
           {/* Subtask parent info */}
           {isSubtask && parentTask && (
-            <p className="text-[10px] text-gray-400">
+            <p className="text-[10px] text-gray-400 dark:text-gray-500">
               Parent: {parentTask.title}
             </p>
           )}
 
           {/* Title */}
           <div>
-            <label className="block text-[10px] font-semibold text-gray-400 mb-1 uppercase tracking-wider">
+            <label className="block text-[10px] font-semibold text-gray-400 dark:text-gray-500 mb-1 uppercase tracking-wider">
               Title
             </label>
             <input
@@ -416,7 +416,7 @@ export function TaskModal() {
               onChange={(e) => setField('title', e.target.value)}
               onKeyDown={handleTitleKeyDown}
               placeholder="Task name..."
-              className="w-full border border-gray-200 rounded-lg px-3 py-[7px] text-[13px] focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
+              className="w-full border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-[7px] text-[13px] focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             />
           </div>
 
@@ -424,13 +424,13 @@ export function TaskModal() {
           <div className="grid grid-cols-2 gap-3">
             {!isSubtask && (
               <div>
-                <label className="block text-[10px] font-semibold text-gray-400 mb-1 uppercase tracking-wider">
+                <label className="block text-[10px] font-semibold text-gray-400 dark:text-gray-500 mb-1 uppercase tracking-wider">
                   Status
                 </label>
                 <select
                   value={form.status_id}
                   onChange={(e) => setField('status_id', e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-[7px] text-[13px] bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
+                  className="w-full border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-[7px] text-[13px] bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
                 >
                   {statuses.map((st) => (
                     <option key={st.id} value={st.id}>
@@ -441,7 +441,7 @@ export function TaskModal() {
               </div>
             )}
             <div>
-              <label className="block text-[10px] font-semibold text-gray-400 mb-1 uppercase tracking-wider">
+              <label className="block text-[10px] font-semibold text-gray-400 dark:text-gray-500 mb-1 uppercase tracking-wider">
                 Client
               </label>
               <select
@@ -449,7 +449,7 @@ export function TaskModal() {
                 onChange={(e) =>
                   setField('client_id', e.target.value || null)
                 }
-                className="w-full border border-gray-200 rounded-lg px-3 py-[7px] text-[13px] bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
+                className="w-full border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-[7px] text-[13px] bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
               >
                 <option value="">No client</option>
                 {clients.map((c) => (
@@ -462,18 +462,18 @@ export function TaskModal() {
 
             {/* Due Date + Priority row */}
             <div>
-              <label className="block text-[10px] font-semibold text-gray-400 mb-1 uppercase tracking-wider">
+              <label className="block text-[10px] font-semibold text-gray-400 dark:text-gray-500 mb-1 uppercase tracking-wider">
                 Due Date
               </label>
               <input
                 type="date"
                 value={form.due_date}
                 onChange={(e) => setField('due_date', e.target.value)}
-                className="w-full border border-gray-200 rounded-lg px-3 py-[7px] text-[13px] focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
+                className="w-full border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-[7px] text-[13px] focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               />
             </div>
             <div>
-              <label className="block text-[10px] font-semibold text-gray-400 mb-1 uppercase tracking-wider">
+              <label className="block text-[10px] font-semibold text-gray-400 dark:text-gray-500 mb-1 uppercase tracking-wider">
                 Priority
               </label>
               <select
@@ -481,7 +481,7 @@ export function TaskModal() {
                 onChange={(e) =>
                   setField('priority', e.target.value as Priority)
                 }
-                className="w-full border border-gray-200 rounded-lg px-3 py-[7px] text-[13px] bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
+                className="w-full border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-[7px] text-[13px] bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
               >
                 {PRIORITY_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -494,8 +494,8 @@ export function TaskModal() {
 
           {/* Recurrence section - only for non-subtask tasks */}
           {!isSubtask && (
-            <div className="bg-gray-50/70 rounded-xl p-3 border border-gray-100">
-              <label className="text-[10px] font-semibold text-gray-400 mb-2 uppercase tracking-wider flex items-center gap-1">
+            <div className="bg-gray-50/70 dark:bg-gray-800/50 rounded-xl p-3 border border-gray-100 dark:border-gray-800">
+              <label className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 mb-2 uppercase tracking-wider flex items-center gap-1">
                 <RepeatIcon size={10} /> Recurrence
               </label>
               <select
@@ -506,7 +506,7 @@ export function TaskModal() {
                     e.target.value as RecurrenceOption
                   )
                 }
-                className="w-full border border-gray-200 rounded-lg px-3 py-[7px] text-[13px] bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 mb-2"
+                className="w-full border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-[7px] text-[13px] bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 mb-2"
               >
                 <option value="none">No repeat</option>
                 <option value="weekly">Weekly</option>
@@ -520,21 +520,21 @@ export function TaskModal() {
               {(form.recurrence_type === 'weekly' ||
                 form.recurrence_type === 'monthly') && (
                 <div className="flex items-center gap-1.5 mt-1">
-                  <span className="text-[11px] text-gray-500">Every</span>
-                  <input
-                    type="number"
-                    min="1"
-                    max="52"
-                    value={form.recurrence_interval}
-                    onChange={(e) =>
-                      setField(
-                        'recurrence_interval',
-                        parseInt(e.target.value) || 1
-                      )
-                    }
-                    className="w-[50px] border border-gray-200 rounded-lg px-2 py-[5px] text-[13px] text-center bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
-                  />
-                  <span className="text-[11px] text-gray-500">
+              <span className="text-[11px] text-gray-500 dark:text-gray-400">Every</span>
+              <input
+                type="number"
+                min="1"
+                max="52"
+                value={form.recurrence_interval}
+                onChange={(e) =>
+                  setField(
+                    'recurrence_interval',
+                    parseInt(e.target.value) || 1
+                  )
+                }
+                className="w-[50px] border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-[5px] text-[13px] text-center bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
+              />
+              <span className="text-[11px] text-gray-500 dark:text-gray-400">
                     {form.recurrence_type === 'weekly'
                       ? 'week(s)'
                       : 'month(s)'}
@@ -544,7 +544,7 @@ export function TaskModal() {
 
               {form.recurrence_type === 'custom_days' && (
                 <div className="flex items-center gap-1.5 mt-1">
-                  <span className="text-[11px] text-gray-500">Every</span>
+                  <span className="text-[11px] text-gray-500 dark:text-gray-400">Every</span>
                   <input
                     type="number"
                     min="1"
@@ -555,9 +555,9 @@ export function TaskModal() {
                         parseInt(e.target.value) || 1
                       )
                     }
-                    className="w-[50px] border border-gray-200 rounded-lg px-2 py-[5px] text-[13px] text-center bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
+                    className="w-[50px] border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-[5px] text-[13px] text-center bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
                   />
-                  <span className="text-[11px] text-gray-500">days</span>
+                  <span className="text-[11px] text-gray-500 dark:text-gray-400">days</span>
                 </div>
               )}
 
@@ -571,7 +571,7 @@ export function TaskModal() {
                       className={`w-[38px] h-[30px] rounded-full text-[11px] font-semibold transition-all ${
                         form.recurrence_weekdays.includes(i)
                           ? 'bg-cyan-500 text-white shadow-sm shadow-cyan-500/20'
-                          : 'bg-white text-gray-500 border border-gray-200 hover:border-cyan-300 hover:text-cyan-600'
+                          : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:border-cyan-300 hover:text-cyan-600 dark:hover:border-cyan-600 dark:hover:text-cyan-400'
                       }`}
                     >
                       {day}
@@ -581,7 +581,7 @@ export function TaskModal() {
               )}
 
               {form.recurrence_type !== 'none' && (
-                <p className="text-[10px] text-cyan-600 mt-2 flex items-center gap-1">
+                <p className="text-[10px] text-cyan-600 dark:text-cyan-400 mt-2 flex items-center gap-1">
                   <RepeatIcon size={9} /> When marked as done, a new task is
                   created with the next due date.
                 </p>
@@ -591,20 +591,20 @@ export function TaskModal() {
 
           {/* Quick Notes */}
           <div>
-            <label className="block text-[10px] font-semibold text-gray-400 mb-1 uppercase tracking-wider">
+            <label className="block text-[10px] font-semibold text-gray-400 dark:text-gray-500 mb-1 uppercase tracking-wider">
               Quick Notes
             </label>
             <input
               value={form.quick_notes}
               onChange={(e) => setField('quick_notes', e.target.value)}
               placeholder="Quick note..."
-              className="w-full border border-gray-200 rounded-lg px-3 py-[7px] text-[13px] focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
+              className="w-full border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-[7px] text-[13px] focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-[10px] font-semibold text-gray-400 mb-1 uppercase tracking-wider">
+            <label className="block text-[10px] font-semibold text-gray-400 dark:text-gray-500 mb-1 uppercase tracking-wider">
               Description
             </label>
             <TiptapEditor
@@ -620,30 +620,30 @@ export function TaskModal() {
                 <ClockIcon size={10} /> Time Entries
               </label>
               {loadingEntries && (
-                <p className="text-[11px] text-gray-400 py-2">Loading...</p>
+                <p className="text-[11px] text-gray-400 dark:text-gray-500 py-2">Loading...</p>
               )}
               {!loadingEntries && timeEntries.length === 0 && (
-                <p className="text-[11px] text-gray-400 py-2">No time entries yet.</p>
+                <p className="text-[11px] text-gray-400 dark:text-gray-500 py-2">No time entries yet.</p>
               )}
               {!loadingEntries && timeEntries.length > 0 && (
                 <div className="space-y-1">
                   {timeEntries.map((entry) => (
                     <div
                       key={entry.id}
-                      className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-1.5 group/entry"
+                      className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-1.5 group/entry"
                     >
-                      <span className="text-[11px] text-gray-500 shrink-0">
+                      <span className="text-[11px] text-gray-500 dark:text-gray-400 shrink-0">
                         {fmtDate(entry.tracked_date)}
                       </span>
-                      <span className="text-[11px] text-gray-600 flex-1 truncate">
+                      <span className="text-[11px] text-gray-600 dark:text-gray-400 flex-1 truncate">
                         {entry.description || '—'}
                       </span>
-                      <span className="text-[11px] font-mono font-medium text-gray-700 shrink-0">
+                      <span className="text-[11px] font-mono font-medium text-gray-700 dark:text-gray-300 shrink-0">
                         {fmt(entry.minutes)}
                       </span>
                       <button
                         onClick={() => handleDeleteTimeEntry(entry.id, entry.minutes)}
-                        className="opacity-0 group-hover/entry:opacity-100 text-gray-300 hover:text-red-500 transition-all shrink-0"
+                        className="opacity-0 group-hover/entry:opacity-100 text-gray-300 dark:text-gray-600 hover:text-red-500 dark:hover:text-red-400 transition-all shrink-0"
                         title="Delete time entry"
                       >
                         <TrashIcon size={11} />

@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useAppStore, type DateFilter } from "@/lib/store/app-store";
-import { SearchIcon, PlusIcon } from "@/components/ui/Icons";
+import { SearchIcon, PlusIcon, SunIcon, MoonIcon } from "@/components/ui/Icons";
 
 const DATE_FILTERS: { value: DateFilter; label: string }[] = [
   { value: "1m", label: "1M" },
@@ -34,6 +34,8 @@ export function Header() {
   const dateFilter = useAppStore((s) => s.dateFilter);
   const setDateFilter = useAppStore((s) => s.setDateFilter);
   const openTaskModal = useAppStore((s) => s.openTaskModal);
+  const theme = useAppStore((s) => s.theme);
+  const setTheme = useAppStore((s) => s.setTheme);
   const hydrateFromStorage = useAppStore((s) => s.hydrateFromStorage);
 
   useEffect(() => {
@@ -44,11 +46,11 @@ export function Header() {
   const badge = getBadgeLabel(pathname);
 
   return (
-    <header className="h-[50px] shrink-0 bg-white border-b border-gray-200/70 flex items-center justify-between px-4">
+    <header className="h-[50px] shrink-0 bg-white dark:bg-gray-900 border-b border-gray-200/70 dark:border-gray-800 flex items-center justify-between px-4">
       <div className="flex items-center gap-2">
-        <h1 className="text-[16px] font-bold text-gray-900">Dev Task</h1>
+        <h1 className="text-[16px] font-bold text-gray-900 dark:text-gray-100">Dev Task</h1>
         {badge && (
-          <span className="text-[11px] text-gray-400 font-medium bg-gray-100 px-[8px] py-[2px] rounded-full">
+          <span className="text-[11px] text-gray-400 dark:text-gray-500 font-medium bg-gray-100 dark:bg-gray-800 px-[8px] py-[2px] rounded-full">
             {badge}
           </span>
         )}
@@ -57,25 +59,25 @@ export function Header() {
       {isTasksPage && (
         <div className="flex items-center gap-2">
           <div className="relative">
-            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400">
+            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500">
               <SearchIcon />
             </span>
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search tasks..."
-              className="pl-[28px] pr-3 py-[6px] text-[13px] bg-gray-50 border border-gray-200 rounded-lg w-[220px] focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 focus:bg-white transition-all placeholder:text-gray-400"
+              className="pl-[28px] pr-3 py-[6px] text-[13px] bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg w-[220px] focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 focus:bg-white dark:focus:bg-gray-800 transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
             />
           </div>
-          <div className="flex items-center bg-gray-100 rounded-lg p-[2px]">
+          <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg p-[2px]">
             {DATE_FILTERS.map((f) => (
               <button
                 key={f.value}
                 onClick={() => setDateFilter(f.value)}
                 className={`text-[11px] font-medium px-[10px] py-[4px] rounded-md transition-colors ${
                   dateFilter === f.value
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-500 hover:text-gray-700"
+                    ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm"
+                    : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                 }`}
               >
                 {f.label}
@@ -84,9 +86,16 @@ export function Header() {
           </div>
           <button
             onClick={() => openTaskModal()}
-            className="flex items-center gap-1 bg-[#1a1a2e] text-white text-[13px] font-medium px-3 py-[6px] rounded-lg hover:bg-[#252540] shadow-sm transition-colors"
+            className="flex items-center gap-1 bg-[#1a1a2e] dark:bg-gray-700 text-white text-[13px] font-medium px-3 py-[6px] rounded-lg hover:bg-[#252540] dark:hover:bg-gray-600 shadow-sm transition-colors"
           >
             <PlusIcon size={11} /> New Task
+          </button>
+          <button
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
           </button>
         </div>
       )}

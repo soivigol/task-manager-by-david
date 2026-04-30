@@ -61,11 +61,11 @@ export function StatusGroup({
     <div className="mb-0.5">
       {/* Status header */}
       <div
-        className="flex items-center gap-2 h-[36px] pl-2 cursor-pointer select-none hover:bg-gray-50/80 rounded transition-colors"
+        className="flex items-center gap-2 h-[36px] pl-2 cursor-pointer select-none hover:bg-gray-50/80 dark:hover:bg-gray-800/50 rounded transition-colors"
         onClick={() => toggleGroupCollapsed(status.id)}
       >
         <span
-          className="text-gray-400 transition-transform duration-150"
+          className="text-gray-400 dark:text-gray-500 transition-transform duration-150"
           style={{ transform: collapsed ? 'rotate(-90deg)' : '' }}
         >
           <ChevronIcon down size={10} />
@@ -76,15 +76,15 @@ export function StatusGroup({
         >
           {status.name}
         </span>
-        <span className="text-[12px] text-gray-400 font-medium">{filtered.length}</span>
-        {total > 0 && <span className="text-[12px] text-gray-400">{fmt(total)}</span>}
+        <span className="text-[12px] text-gray-400 dark:text-gray-500 font-medium">{filtered.length}</span>
+        {total > 0 && <span className="text-[12px] text-gray-400 dark:text-gray-500">{fmt(total)}</span>}
       </div>
 
       {!collapsed && (
         <>
           {/* Column headers */}
           <div
-            className="grid items-center h-[26px] text-[10px] font-bold text-gray-400 uppercase tracking-[0.06em] border-b border-gray-200/50"
+            className="grid items-center h-[26px] text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.06em] border-b border-gray-200/50 dark:border-gray-700/50"
             style={{ gridTemplateColumns: GRID }}
           >
             <div className="pl-[60px]">Name</div>
@@ -97,18 +97,18 @@ export function StatusGroup({
 
           {/* Empty state when search yields no results in this group */}
           {search && filtered.length === 0 && tasks.length > 0 && (
-            <div className="py-3 pl-[60px] text-[12px] text-gray-400">
+            <div className="py-3 pl-[60px] text-[12px] text-gray-400 dark:text-gray-500">
               No matching tasks
             </div>
           )}
 
           {/* Empty state when group has no tasks at all */}
           {!search && filtered.length === 0 && (
-            <div className="py-3 pl-[60px] text-[12px] text-gray-400">
+            <div className="py-3 pl-[60px] text-[12px] text-gray-400 dark:text-gray-500">
               No tasks &mdash;{' '}
               <button
                 onClick={() => openTaskModal(undefined, status.id)}
-                className="text-cyan-600 hover:text-cyan-700 underline underline-offset-2"
+                className="text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300 underline underline-offset-2"
               >
                 Add Task
               </button>
@@ -160,7 +160,7 @@ export function StatusGroup({
           {/* Add task button */}
           <button
             onClick={() => openTaskModal(undefined, status.id)}
-            className="flex items-center gap-1 text-gray-400 hover:text-gray-600 text-[12px] py-2 pl-[60px] transition-colors w-full text-left"
+            className="flex items-center gap-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-[12px] py-2 pl-[60px] transition-colors w-full text-left"
           >
             <PlusIcon size={10} /> Add Task
           </button>

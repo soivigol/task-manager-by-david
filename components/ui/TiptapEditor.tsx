@@ -28,8 +28,8 @@ function ToolbarButton({
       title={title}
       className={`px-1.5 py-1 rounded text-[11px] font-medium transition-colors ${
         active
-          ? 'bg-gray-200 text-gray-800'
-          : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+          ? 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+          : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300'
       }`}
     >
       {children}
@@ -49,7 +49,7 @@ export function TiptapEditor({ content, onChange }: TiptapEditorProps) {
     editorProps: {
       attributes: {
         class:
-          'prose prose-sm max-w-none px-3 py-2 min-h-[80px] text-[13px] focus:outline-none [&_h2]:text-[14px] [&_h2]:font-semibold [&_h2]:mb-1 [&_h2]:mt-2 [&_p]:my-0.5 [&_ul]:my-1 [&_ul]:pl-4 [&_li]:text-[13px]',
+          'prose prose-sm dark:prose-invert max-w-none px-3 py-2 min-h-[80px] text-[13px] focus:outline-none [&_h2]:text-[14px] [&_h2]:font-semibold [&_h2]:mb-1 [&_h2]:mt-2 [&_p]:my-0.5 [&_ul]:my-1 [&_ul]:pl-4 [&_li]:text-[13px]',
       },
     },
     onUpdate: ({ editor: ed }) => {
@@ -90,9 +90,9 @@ export function TiptapEditor({ content, onChange }: TiptapEditorProps) {
   if (!editor) return null
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-cyan-500/20 focus-within:border-cyan-500">
+    <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-cyan-500/20 focus-within:border-cyan-500">
       {/* Toolbar */}
-      <div className="flex items-center gap-0.5 px-2 py-1 border-b border-gray-100 bg-gray-50/50">
+      <div className="flex items-center gap-0.5 px-2 py-1 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
         <ToolbarButton
           onClick={toggleBold}
           active={editor.isActive('bold')}

@@ -97,18 +97,18 @@ export function StatusSettings({ initialStatuses, taskCountByStatus }: StatusSet
   return (
     <div className="space-y-2">
       {error && (
-        <div className="text-[11px] text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</div>
+        <div className="text-[11px] text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 px-3 py-2 rounded-lg">{error}</div>
       )}
 
       {statuses.map((status, index) => {
         const taskCount = taskCountByStatus[status.id] ?? 0
         return (
-          <div key={status.id} className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
+          <div key={status.id} className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2">
             <div className="flex flex-col -my-1">
               <button
                 onClick={() => moveStatus(index, -1)}
                 disabled={index === 0}
-                className="text-gray-400 hover:text-gray-600 disabled:text-gray-200 disabled:cursor-not-allowed transition-colors p-0 leading-none"
+                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 disabled:text-gray-200 dark:disabled:text-gray-700 disabled:cursor-not-allowed transition-colors p-0 leading-none"
                 title="Move up"
               >
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 2L1 7h8L5 2z" fill="currentColor"/></svg>
@@ -116,7 +116,7 @@ export function StatusSettings({ initialStatuses, taskCountByStatus }: StatusSet
               <button
                 onClick={() => moveStatus(index, 1)}
                 disabled={index === statuses.length - 1}
-                className="text-gray-400 hover:text-gray-600 disabled:text-gray-200 disabled:cursor-not-allowed transition-colors p-0 leading-none"
+                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 disabled:text-gray-200 dark:disabled:text-gray-700 disabled:cursor-not-allowed transition-colors p-0 leading-none"
                 title="Move down"
               >
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 8L1 3h8L5 8z" fill="currentColor"/></svg>
@@ -136,12 +136,12 @@ export function StatusSettings({ initialStatuses, taskCountByStatus }: StatusSet
                   if (e.key === 'Enter') saveEdit(status.id)
                   if (e.key === 'Escape') setEditingId(null)
                 }}
-                className="flex-1 text-[12px] font-medium text-gray-700 bg-white border border-gray-200 rounded px-1.5 py-0.5 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
+                className="flex-1 text-[12px] font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded px-1.5 py-0.5 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
               />
             ) : (
               <button
                 onClick={() => startEdit(status)}
-                className="flex-1 text-left text-[12px] font-medium text-gray-700 hover:text-cyan-700 transition-colors"
+                className="flex-1 text-left text-[12px] font-medium text-gray-700 dark:text-gray-300 hover:text-cyan-700 dark:hover:text-cyan-400 transition-colors"
               >
                 {status.name}
               </button>
@@ -150,8 +150,8 @@ export function StatusSettings({ initialStatuses, taskCountByStatus }: StatusSet
               onClick={() => toggleClosed(status)}
               className={`text-[9px] px-1 py-0.5 rounded font-semibold cursor-pointer transition-colors ${
                 status.is_closed
-                  ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                  : 'bg-gray-200 text-gray-500 hover:bg-gray-300'
+                  ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50'
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600'
               }`}
             >
               {status.is_closed ? 'CLOSED' : 'OPEN'}
@@ -161,8 +161,8 @@ export function StatusSettings({ initialStatuses, taskCountByStatus }: StatusSet
               disabled={taskCount > 0}
               className={`transition-colors ${
                 taskCount > 0
-                  ? 'text-gray-200 cursor-not-allowed'
-                  : 'text-gray-300 hover:text-red-500'
+                  ? 'text-gray-200 dark:text-gray-700 cursor-not-allowed'
+                  : 'text-gray-300 dark:text-gray-600 hover:text-red-500 dark:hover:text-red-400'
               }`}
               title={taskCount > 0 ? `${taskCount} task(s) using this status` : 'Delete status'}
             >
@@ -184,12 +184,12 @@ export function StatusSettings({ initialStatuses, taskCountByStatus }: StatusSet
           onChange={e => setNewName(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleAdd()}
           placeholder="New status..."
-          className="flex-1 border border-gray-200 rounded-lg px-2.5 py-[6px] text-[12px] focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
+          className="flex-1 border border-gray-200 dark:border-gray-700 rounded-lg px-2.5 py-[6px] text-[12px] focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         />
         <button
           onClick={handleAdd}
           disabled={loading || !newName.trim()}
-          className="bg-[#1a1a2e] text-white px-2.5 py-[6px] rounded-lg text-[11px] font-medium hover:bg-[#252540] disabled:opacity-50 transition-colors"
+          className="bg-[#1a1a2e] dark:bg-gray-700 text-white px-2.5 py-[6px] rounded-lg text-[11px] font-medium hover:bg-[#252540] dark:hover:bg-gray-600 disabled:opacity-50 transition-colors"
         >
           Add
         </button>

@@ -198,7 +198,7 @@ export function TaskRow({
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className="group border-b border-gray-100/60 hover:bg-[#f8f9fb] transition-colors"
+      className="group border-b border-gray-100/60 dark:border-gray-800/60 hover:bg-[#f8f9fb] dark:hover:bg-gray-800/30 transition-colors"
     >
       <div
         className="grid items-center h-[40px]"
@@ -238,7 +238,7 @@ export function TaskRow({
               {hasSubtasks && (
                 <button
                   onClick={onToggle}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
                 >
                   {expanded ? <ChevronIcon down /> : <ChevronIcon />}
                 </button>
@@ -259,19 +259,19 @@ export function TaskRow({
                   setEditingTitle(false)
                 }
               }}
-              className="flex-1 min-w-0 text-[14px] text-gray-800 bg-white border border-gray-200 rounded px-1 py-0.5 pl-1 outline-none focus:ring-1 focus:ring-cyan-500/30 focus:border-cyan-500"
+              className="flex-1 min-w-0 text-[14px] text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded px-1 py-0.5 pl-1 outline-none focus:ring-1 focus:ring-cyan-500/30 focus:border-cyan-500"
             />
           ) : (
             <button
               onClick={() => setEditingTitle(true)}
-              className="flex-1 min-w-0 text-left text-[14px] text-gray-800 hover:text-cyan-700 truncate pl-1 transition-colors"
+              className="flex-1 min-w-0 text-left text-[14px] text-gray-800 dark:text-gray-200 hover:text-cyan-700 dark:hover:text-cyan-400 truncate pl-1 transition-colors"
             >
               {task.title}
             </button>
           )}
 
           {!isSubtask && task.recurrence_type && (
-            <span className="shrink-0 inline-flex items-center gap-0.5 text-[11px] text-cyan-600 bg-cyan-50 rounded px-1.5 py-[1px] font-medium mr-0.5">
+            <span className="shrink-0 inline-flex items-center gap-0.5 text-[11px] text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-900/30 rounded px-1.5 py-[1px] font-medium mr-0.5">
               <RepeatIcon size={9} />
               {recurrenceLabel(task)}
             </span>
@@ -281,7 +281,7 @@ export function TaskRow({
           <button
             onClick={() => openTaskModal(task.id)}
             title="Edit task details"
-            className={`shrink-0 mx-0.5 w-[24px] h-[24px] rounded flex items-center justify-center text-gray-400 hover:text-cyan-600 hover:bg-cyan-50 transition-all ${
+            className={`shrink-0 mx-0.5 w-[24px] h-[24px] rounded flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/30 transition-all ${
               editingTitle ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
             }`}
           >
@@ -292,7 +292,7 @@ export function TaskRow({
             <button
               onClick={() => openTaskModal(undefined, task.status_id, task.id)}
               title="Add subtask"
-              className="opacity-0 group-hover:opacity-100 shrink-0 mx-0.5 w-[20px] h-[20px] rounded flex items-center justify-center text-gray-300 hover:text-cyan-600 hover:bg-cyan-50 transition-all"
+              className="opacity-0 group-hover:opacity-100 shrink-0 mx-0.5 w-[20px] h-[20px] rounded flex items-center justify-center text-gray-300 dark:text-gray-600 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/30 transition-all"
             >
               <PlusIcon size={10} />
             </button>
@@ -308,13 +308,13 @@ export function TaskRow({
               defaultValue={task.due_date ?? ''}
               onChange={(e) => handleDateChange(e.target.value)}
               onBlur={() => setEditingDate(false)}
-              className="w-full text-[13px] text-gray-600 bg-white border border-gray-200 rounded px-1 py-0.5 outline-none focus:ring-1 focus:ring-cyan-500/30 focus:border-cyan-500"
+              className="w-full text-[13px] text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded px-1 py-0.5 outline-none focus:ring-1 focus:ring-cyan-500/30 focus:border-cyan-500"
             />
           ) : (
             <button
               onClick={() => setEditingDate(true)}
-              className={`text-[13px] hover:text-cyan-600 transition-colors ${
-                isPastDue ? 'text-red-500 font-medium' : 'text-gray-500'
+              className={`text-[13px] hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors ${
+                isPastDue ? 'text-red-500 font-medium' : 'text-gray-500 dark:text-gray-400'
               }`}
             >
               {fmtDate(task.due_date) || '\u2014'}
@@ -337,7 +337,7 @@ export function TaskRow({
             e.stopPropagation()
             onTimeClick(task.id, task.title)
           }}
-          className="flex items-center justify-center gap-1 text-[13px] text-gray-400 hover:text-cyan-600 transition-colors h-full"
+          className="flex items-center justify-center gap-1 text-[13px] text-gray-400 dark:text-gray-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors h-full"
         >
           <ClockIcon />
           <span>{fmt(task.total_tracked_minutes)}</span>
@@ -360,16 +360,16 @@ export function TaskRow({
                 {client.name}
               </span>
             ) : (
-              <span className="text-gray-300 text-[13px] hover:text-cyan-500 transition-colors">&mdash;</span>
+              <span className="text-gray-300 dark:text-gray-600 text-[13px] hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors">&mdash;</span>
             )}
           </button>
 
           {clientPickerOpen && (
-            <div className="absolute top-full mt-1 right-0 z-[200] bg-white border border-gray-200 rounded-lg shadow-lg py-1 min-w-[140px]">
+            <div className="absolute top-full mt-1 right-0 z-[200] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg py-1 min-w-[140px]">
               <button
                 onClick={() => handleClientChange(null)}
-                className={`w-full text-left px-3 py-1.5 text-[12px] hover:bg-gray-50 transition-colors ${
-                  !task.client_id ? 'text-cyan-600 font-medium' : 'text-gray-500'
+                className={`w-full text-left px-3 py-1.5 text-[12px] hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
+                  !task.client_id ? 'text-cyan-600 dark:text-cyan-400 font-medium' : 'text-gray-500 dark:text-gray-400'
                 }`}
               >
                 None
@@ -378,8 +378,8 @@ export function TaskRow({
                 <button
                   key={c.id}
                   onClick={() => handleClientChange(c.id)}
-                  className={`w-full text-left px-3 py-1.5 text-[12px] hover:bg-gray-50 transition-colors flex items-center gap-2 ${
-                    task.client_id === c.id ? 'text-cyan-600 font-medium' : 'text-gray-700'
+                  className={`w-full text-left px-3 py-1.5 text-[12px] hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2 ${
+                    task.client_id === c.id ? 'text-cyan-600 dark:text-cyan-400 font-medium' : 'text-gray-700 dark:text-gray-300'
                   }`}
                 >
                   <span
@@ -400,7 +400,7 @@ export function TaskRow({
             onChange={(e) => setNotes(e.target.value)}
             onBlur={handleNotesSave}
             placeholder="&mdash;"
-            className="w-full text-[12px] text-gray-500 bg-transparent border-0 focus:outline-none focus:bg-white focus:ring-1 focus:ring-gray-200 rounded px-1 py-0.5 placeholder:text-gray-300 text-right"
+            className="w-full text-[12px] text-gray-500 dark:text-gray-400 bg-transparent border-0 focus:outline-none focus:bg-white dark:focus:bg-gray-800 focus:ring-1 focus:ring-gray-200 dark:focus:ring-gray-700 rounded px-1 py-0.5 placeholder:text-gray-300 dark:placeholder:text-gray-600 text-right"
           />
         </div>
       </div>

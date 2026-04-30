@@ -97,27 +97,27 @@ export function TimePopup({ taskId, taskTitle, onClose }: TimePopupProps) {
 
   return (
     <div className="fixed inset-0 z-[300] flex items-center justify-center">
-      <div className="fixed inset-0 bg-black/15" />
+      <div className="fixed inset-0 bg-black/15 dark:bg-black/60" />
       <div
         ref={popupRef}
-        className="relative bg-white rounded-xl shadow-2xl border border-gray-100 p-5 w-[340px]"
+        className="relative bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-100 dark:border-gray-800 p-5 w-[340px]"
       >
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-[13px] font-semibold text-gray-800 flex items-center gap-1.5">
+          <h3 className="text-[13px] font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-1.5">
             <ClockIcon size={13} /> Add Time
           </h3>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
           >
             <XIcon />
           </button>
         </div>
-        <p className="text-[11px] text-gray-400 mb-3 truncate">{taskTitle}</p>
+        <p className="text-[11px] text-gray-400 dark:text-gray-500 mb-3 truncate">{taskTitle}</p>
 
         <div className="flex gap-2 mb-3">
           <div className="flex-1">
-            <label className="block text-[10px] text-gray-500 mb-1 font-medium">
+            <label className="block text-[10px] text-gray-500 dark:text-gray-400 mb-1 font-medium">
               HOURS
             </label>
             <input
@@ -128,11 +128,11 @@ export function TimePopup({ taskId, taskTitle, onClose }: TimePopupProps) {
               onChange={(e) => setHours(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="0"
-              className="w-full border border-gray-200 rounded-lg px-2.5 py-[7px] text-[13px] focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
+              className="w-full border border-gray-200 dark:border-gray-700 rounded-lg px-2.5 py-[7px] text-[13px] focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 bg-white dark:bg-gray-800"
             />
           </div>
           <div className="flex-1">
-            <label className="block text-[10px] text-gray-500 mb-1 font-medium">
+            <label className="block text-[10px] text-gray-500 dark:text-gray-400 mb-1 font-medium">
               MINUTES
             </label>
             <input
@@ -143,24 +143,24 @@ export function TimePopup({ taskId, taskTitle, onClose }: TimePopupProps) {
               onChange={(e) => setMinutes(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="0"
-              className="w-full border border-gray-200 rounded-lg px-2.5 py-[7px] text-[13px] focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
+              className="w-full border border-gray-200 dark:border-gray-700 rounded-lg px-2.5 py-[7px] text-[13px] focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 bg-white dark:bg-gray-800"
             />
           </div>
           <div className="flex-1">
-            <label className="block text-[10px] text-gray-500 mb-1 font-medium">
+            <label className="block text-[10px] text-gray-500 dark:text-gray-400 mb-1 font-medium">
               DATE
             </label>
             <input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full border border-gray-200 rounded-lg px-1.5 py-[7px] text-[11px] focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
+              className="w-full border border-gray-200 dark:border-gray-700 rounded-lg px-1.5 py-[7px] text-[11px] focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 bg-white dark:bg-gray-800"
             />
           </div>
         </div>
 
         <div className="mb-4">
-          <label className="block text-[10px] text-gray-500 mb-1 font-medium">
+          <label className="block text-[10px] text-gray-500 dark:text-gray-400 mb-1 font-medium">
             DESCRIPTION
           </label>
           <input
@@ -168,14 +168,14 @@ export function TimePopup({ taskId, taskTitle, onClose }: TimePopupProps) {
             onChange={(e) => setDescription(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="What did you work on?"
-            className="w-full border border-gray-200 rounded-lg px-2.5 py-[7px] text-[13px] focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
+            className="w-full border border-gray-200 dark:border-gray-700 rounded-lg px-2.5 py-[7px] text-[13px] focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 bg-white dark:bg-gray-800"
           />
         </div>
 
         <button
           onClick={handleSave}
           disabled={saving}
-          className="w-full bg-[#1a1a2e] text-white rounded-lg py-[8px] text-[12px] font-medium hover:bg-[#252540] transition-colors disabled:opacity-50"
+          className="w-full bg-[#1a1a2e] dark:bg-gray-700 text-white rounded-lg py-[8px] text-[12px] font-medium hover:bg-[#252540] dark:hover:bg-gray-600 transition-colors disabled:opacity-50"
         >
           {saving ? 'Saving...' : 'Save Time Entry'}
         </button>

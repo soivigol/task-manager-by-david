@@ -16,15 +16,15 @@ export function SettingsTabs({ statuses, clients, taskCountByStatus }: SettingsT
 
   return (
     <div className="max-w-[460px]">
-      <div className="flex border-b border-gray-200 mb-4">
+      <div className="flex border-b border-gray-200 dark:border-gray-800 mb-4">
         {(['statuses', 'clients'] as const).map(t => (
           <button
             key={t}
             onClick={() => setTab(t)}
             className={`flex-1 py-2 text-[11px] font-semibold capitalize tracking-wide transition-colors ${
               tab === t
-                ? 'text-gray-900 border-b-2 border-gray-900'
-                : 'text-gray-400 hover:text-gray-600'
+                ? 'text-gray-900 dark:text-gray-100 border-b-2 border-gray-900 dark:border-gray-100'
+                : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'
             }`}
           >
             {t}

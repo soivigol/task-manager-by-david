@@ -15,6 +15,7 @@ interface PickerState {
 }
 
 export type DateFilter = "1m" | "3m" | "6m" | "all";
+export type Theme = "light" | "dark";
 
 interface AppState {
   // Data
@@ -35,6 +36,7 @@ interface AppState {
   collapsedGroups: Record<string, boolean>;
   customOrderGroups: Record<string, boolean>;
   dateFilter: DateFilter;
+  theme: Theme;
 
   // Data actions
   setTasks: (tasks: Task[]) => void;
@@ -61,6 +63,7 @@ interface AppState {
   setCustomOrder: (statusId: string) => void;
   clearCustomOrder: (statusId: string) => void;
   setDateFilter: (filter: DateFilter) => void;
+  setTheme: (theme: Theme) => void;
   hydrateFromStorage: () => void;
 }
 
@@ -99,6 +102,7 @@ export const useAppStore = create<AppState>((set) => ({
   collapsedGroups: {},
   customOrderGroups: {},
   dateFilter: "all",
+  theme: "light",
 
   // Data actions
   setTasks: (tasks) => set({ tasks }),
@@ -173,6 +177,14 @@ export const useAppStore = create<AppState>((set) => ({
     }
     set({ dateFilter: filter });
   },
+  setTheme: (theme) => {
+    try {
+      localStorage.setItem("theme", theme);
+    } catch {
+      // Ignore storage errors
+    }
+    set({ theme });
+  },
   toggleGroupCollapsed: (statusId) =>
     set((state) => {
       const next = {
@@ -211,7 +223,10 @@ export const useAppStore = create<AppState>((set) => ({
         ? JSON.parse(rawCustom)
         : {};
 
-      set({ dateFilter, collapsedGroups, customOrderGroups });
+      const rawTheme = localStorage.getItem("theme");
+      const theme: Theme = rawTheme === "dark" ? "dark" : "light";
+
+      set({ dateFilter, collapsedGroups, customOrderGroups, theme });
     } catch {
       // Ignore storage errors
     }

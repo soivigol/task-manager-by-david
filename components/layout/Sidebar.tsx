@@ -27,7 +27,7 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="w-[46px] shrink-0 bg-[#1a1a2e] flex flex-col items-center py-3">
+    <aside className="w-[46px] shrink-0 bg-sidebar flex flex-col items-center py-3">
       {/* Logo */}
       <div className="w-[28px] h-[28px] rounded-lg bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center text-white font-bold text-[11px] mb-6 shadow-lg shadow-cyan-500/20">
         D

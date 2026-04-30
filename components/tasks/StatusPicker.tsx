@@ -52,7 +52,7 @@ export function StatusPicker({
 
   return (
     <div
-      className="fixed z-[300] bg-white rounded-lg shadow-xl border border-gray-200 py-1"
+      className="fixed z-[300] bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-1"
       style={{ top: pos.y, left: pos.x, minWidth: 145 }}
       onClick={(e) => e.stopPropagation()}
     >
@@ -60,17 +60,17 @@ export function StatusPicker({
         <button
           key={s.id}
           onClick={() => handleChange(s.id)}
-          className={`w-full flex items-center gap-2 px-3 py-[5px] text-[12px] hover:bg-gray-50 ${
-            s.id === currentStatusId ? 'bg-gray-50 font-semibold' : ''
+          className={`w-full flex items-center gap-2 px-3 py-[5px] text-[12px] hover:bg-gray-50 dark:hover:bg-gray-700 ${
+            s.id === currentStatusId ? 'bg-gray-50 dark:bg-gray-700 font-semibold' : ''
           }`}
         >
           <span
             className="w-[9px] h-[9px] rounded-full shrink-0"
             style={{ backgroundColor: s.color }}
           />
-          <span className="text-gray-700">{s.name}</span>
+          <span className="text-gray-700 dark:text-gray-300">{s.name}</span>
           {s.id === currentStatusId && (
-            <span className="ml-auto text-gray-400 text-[10px]">&#10003;</span>
+            <span className="ml-auto text-gray-400 dark:text-gray-500 text-[10px]">&#10003;</span>
           )}
         </button>
       ))}

@@ -28,7 +28,7 @@ export function ConfirmDialog({
         <>
           <button
             onClick={onCancel}
-            className="px-3 py-[6px] text-[12px] text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+            className="px-3 py-[6px] text-[12px] text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
           >
             Cancel
           </button>
@@ -42,9 +42,9 @@ export function ConfirmDialog({
       }
     >
       <div className="px-5 py-4">
-        <p className="text-[13px] text-gray-700">{message}</p>
+        <p className="text-[13px] text-gray-700 dark:text-gray-300">{message}</p>
         {note && (
-          <p className="text-[11px] text-gray-400 mt-2">{note}</p>
+          <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-2">{note}</p>
         )}
       </div>
     </Modal>

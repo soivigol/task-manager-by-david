@@ -99,28 +99,28 @@ export function ReportView({ initialReport, clients }: ReportViewProps) {
 
   return (
     <div className="p-4 max-w-[640px]">
-      <div className="bg-white rounded-xl border border-gray-200/80 p-5">
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200/80 dark:border-gray-800 p-5">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-[13px] font-semibold text-gray-800">
+            <h2 className="text-[13px] font-semibold text-gray-800 dark:text-gray-200">
               Time Report
             </h2>
             {/* Month selector */}
             <div className="flex items-center gap-2 mt-1">
               <button
                 onClick={handlePrevMonth}
-                className="text-gray-400 hover:text-gray-600 transition-colors p-0.5"
+                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors p-0.5"
                 title="Previous month"
               >
                 <ChevronIcon size={10} />
               </button>
-              <p className="text-[11px] text-gray-500 font-medium min-w-[110px] text-center">
+              <p className="text-[11px] text-gray-500 dark:text-gray-400 font-medium min-w-[110px] text-center">
                 {MONTH_NAMES[month]} {year}
               </p>
               <button
                 onClick={handleNextMonth}
-                className="text-gray-400 hover:text-gray-600 transition-colors p-0.5 rotate-180"
+                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors p-0.5 rotate-180"
                 title="Next month"
               >
                 <ChevronIcon size={10} />
@@ -131,7 +131,7 @@ export function ReportView({ initialReport, clients }: ReportViewProps) {
             <select
               value={clientFilter}
               onChange={(e) => handleClientChange(e.target.value)}
-              className="text-[11px] border border-gray-200 rounded-lg px-2 py-[4px] bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
+              className="text-[11px] border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-[4px] bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
             >
               <option value="all">All clients</option>
               {clients.map((c) => (
@@ -142,7 +142,7 @@ export function ReportView({ initialReport, clients }: ReportViewProps) {
             </select>
             <button
               onClick={handleExportPDF}
-              className="flex items-center gap-1 bg-[#1a1a2e] text-white text-[11px] font-medium px-2.5 py-[4px] rounded-lg hover:bg-[#252540] transition-colors"
+              className="flex items-center gap-1 bg-[#1a1a2e] dark:bg-gray-700 text-white text-[11px] font-medium px-2.5 py-[4px] rounded-lg hover:bg-[#252540] dark:hover:bg-gray-600 transition-colors"
             >
               <ReportsIcon size={12} /> PDF
             </button>
@@ -151,7 +151,7 @@ export function ReportView({ initialReport, clients }: ReportViewProps) {
 
         {/* Loading state */}
         {loading && (
-          <p className="text-[11px] text-gray-400 py-4 text-center">
+          <p className="text-[11px] text-gray-400 dark:text-gray-500 py-4 text-center">
             Loading...
           </p>
         )}
@@ -165,7 +165,7 @@ export function ReportView({ initialReport, clients }: ReportViewProps) {
 
         {/* Report content */}
         {!loading && report.clients.length === 0 && (
-          <p className="text-[11px] text-gray-400 py-4 text-center">
+          <p className="text-[11px] text-gray-400 dark:text-gray-500 py-4 text-center">
             No time logged for this period
           </p>
         )}
@@ -174,17 +174,17 @@ export function ReportView({ initialReport, clients }: ReportViewProps) {
           report.clients.map((cl) => (
             <div key={cl.id} className="mb-3">
               {/* Client header */}
-              <div className="flex items-center justify-between py-1.5 border-b border-gray-200">
+              <div className="flex items-center justify-between py-1.5 border-b border-gray-200 dark:border-gray-800">
                 <div className="flex items-center gap-1.5">
                   <span
                     className="w-[8px] h-[8px] rounded"
                     style={{ backgroundColor: cl.color }}
                   />
-                  <span className="text-[12px] font-semibold text-gray-800">
+                  <span className="text-[12px] font-semibold text-gray-800 dark:text-gray-200">
                     {cl.name}
                   </span>
                 </div>
-                <span className="text-[12px] font-mono font-bold text-gray-700">
+                <span className="text-[12px] font-mono font-bold text-gray-700 dark:text-gray-300">
                   {fmt(cl.totalMinutes)}
                 </span>
               </div>
@@ -195,8 +195,8 @@ export function ReportView({ initialReport, clients }: ReportViewProps) {
                   key={t.id}
                   className="flex items-center justify-between py-0.5 pl-4 text-[11px]"
                 >
-                  <span className="text-gray-600">{t.title}</span>
-                  <span className="text-gray-400 font-mono">
+                  <span className="text-gray-600 dark:text-gray-400">{t.title}</span>
+                  <span className="text-gray-400 dark:text-gray-500 font-mono">
                     {fmt(t.totalMinutes)}
                   </span>
                 </div>
@@ -208,7 +208,7 @@ export function ReportView({ initialReport, clients }: ReportViewProps) {
                   className={`pl-4 pt-0.5 text-[10px] ${
                     cl.prepaid_remaining_minutes < 0
                       ? 'text-red-500'
-                      : 'text-cyan-600'
+                      : 'text-cyan-600 dark:text-cyan-400'
                   }`}
                 >
                   Prepaid: {fmt(cl.prepaid_remaining_minutes)} /{' '}
@@ -220,9 +220,9 @@ export function ReportView({ initialReport, clients }: ReportViewProps) {
 
         {/* Grand total */}
         {!loading && report.clients.length > 0 && (
-          <div className="flex items-center justify-between pt-3 mt-1 border-t-2 border-gray-900">
-            <span className="text-[12px] font-bold text-gray-900">TOTAL</span>
-            <span className="text-[12px] font-mono font-bold text-gray-900">
+          <div className="flex items-center justify-between pt-3 mt-1 border-t-2 border-gray-900 dark:border-gray-100">
+            <span className="text-[12px] font-bold text-gray-900 dark:text-gray-100">TOTAL</span>
+            <span className="text-[12px] font-mono font-bold text-gray-900 dark:text-gray-100">
               {fmt(report.grandTotal)}
             </span>
           </div>

@@ -74,11 +74,11 @@ export function ClientSettings({ initialClients }: ClientSettingsProps) {
   return (
     <div className="space-y-2">
       {error && (
-        <div className="text-[11px] text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</div>
+        <div className="text-[11px] text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 px-3 py-2 rounded-lg">{error}</div>
       )}
 
       {clients.map(client => (
-        <div key={client.id} className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
+        <div key={client.id} className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2">
           <span
             className="w-3 h-3 rounded shrink-0"
             style={{ backgroundColor: client.color }}
@@ -93,24 +93,24 @@ export function ClientSettings({ initialClients }: ClientSettingsProps) {
                 if (e.key === 'Escape') setEditingId(null)
               }}
               autoFocus
-              className="flex-1 text-[12px] font-medium text-gray-700 bg-white border border-gray-200 rounded px-1.5 py-0.5 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
+              className="flex-1 text-[12px] font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded px-1.5 py-0.5 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
             />
           ) : (
             <button
               onClick={() => startEdit(client)}
-              className="flex-1 text-left text-[12px] font-medium text-gray-700 hover:text-cyan-700 transition-colors"
+              className="flex-1 text-left text-[12px] font-medium text-gray-700 dark:text-gray-300 hover:text-cyan-700 dark:hover:text-cyan-400 transition-colors"
             >
               {client.name}
             </button>
           )}
           {client.prepaid_total_minutes > 0 && (
-            <span className="text-[9px] bg-cyan-50 text-cyan-700 px-1 py-0.5 rounded font-semibold">
+            <span className="text-[9px] bg-cyan-50 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-400 px-1 py-0.5 rounded font-semibold">
               {fmt(client.prepaid_remaining_minutes)}/{fmt(client.prepaid_total_minutes)}
             </span>
           )}
           <button
             onClick={() => handleDelete(client.id)}
-            className="text-gray-300 hover:text-red-500 transition-colors"
+            className="text-gray-300 dark:text-gray-600 hover:text-red-500 dark:hover:text-red-400 transition-colors"
           >
             <TrashIcon />
           </button>
@@ -128,19 +128,19 @@ export function ClientSettings({ initialClients }: ClientSettingsProps) {
           value={newName}
           onChange={e => setNewName(e.target.value)}
           placeholder="Client name..."
-          className="flex-1 border border-gray-200 rounded-lg px-2.5 py-[6px] text-[12px] focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
+          className="flex-1 border border-gray-200 dark:border-gray-700 rounded-lg px-2.5 py-[6px] text-[12px] focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         />
         <input
           value={newPrepaid}
           onChange={e => setNewPrepaid(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleAdd()}
           placeholder="Prep. h"
-          className="w-[60px] border border-gray-200 rounded-lg px-2 py-[6px] text-[12px] focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
+          className="w-[60px] border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-[6px] text-[12px] focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         />
         <button
           onClick={handleAdd}
           disabled={loading || !newName.trim()}
-          className="bg-[#1a1a2e] text-white px-2.5 py-[6px] rounded-lg text-[11px] font-medium hover:bg-[#252540] disabled:opacity-50 transition-colors"
+          className="bg-[#1a1a2e] dark:bg-gray-700 text-white px-2.5 py-[6px] rounded-lg text-[11px] font-medium hover:bg-[#252540] dark:hover:bg-gray-600 disabled:opacity-50 transition-colors"
         >
           Add
         </button>
