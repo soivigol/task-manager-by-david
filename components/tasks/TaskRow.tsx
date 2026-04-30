@@ -9,6 +9,7 @@ import { fmt, fmtDate } from '@/lib/utils'
 import { recurrenceLabel } from '@/lib/recurrence'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { DatePicker } from './DatePicker'
 
 const GRID = 'minmax(0, 1fr) 100px 34px 84px 90px 100px'
 
@@ -73,9 +74,8 @@ export function TaskRow({
   const [titleDraft, setTitleDraft] = useState(task.title)
   const titleRef = useRef<HTMLInputElement>(null)
 
-  // Inline due date editing
-  const [editingDate, setEditingDate] = useState(false)
-  const dateRef = useRef<HTMLInputElement>(null)
+  // Inline due date editing — custom calendar popover
+  const [datePickerPos, setDatePickerPos] = useState<{ x: number; y: number } | null>(null)
 
   // Inline client picker
   const [clientPickerOpen, setClientPickerOpen] = useState(false)
@@ -98,13 +98,6 @@ export function TaskRow({
       titleRef.current.select()
     }
   }, [editingTitle])
-
-  // Focus and open date picker when entering edit mode
-  useEffect(() => {
-    if (editingDate && dateRef.current) {
-      dateRef.current.showPicker()
-    }
-  }, [editingDate])
 
   // Close client picker on outside click
   useEffect(() => {
@@ -170,8 +163,13 @@ export function TaskRow({
     }
   }, [titleDraft, task.id, task.title, updateTaskOptimistic])
 
+  const handleDateEditStart = useCallback((e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    setDatePickerPos({ x: rect.left, y: rect.bottom + 4 })
+  }, [])
+
   const handleDateChange = useCallback(async (newDate: string) => {
-    setEditingDate(false)
+    setDatePickerPos(null)
     const value = newDate || null
     if (value === task.due_date) return
     updateTaskOptimistic(task.id, { due_date: value })
@@ -301,24 +299,21 @@ export function TaskRow({
 
         {/* COL 2: Due date — click to edit inline */}
         <div className="text-right pr-2 relative">
-          {editingDate ? (
-            <input
-              ref={dateRef}
-              type="date"
-              defaultValue={task.due_date ?? ''}
-              onChange={(e) => handleDateChange(e.target.value)}
-              onBlur={() => setEditingDate(false)}
-              className="w-full text-[13px] text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded px-1 py-0.5 outline-none focus:ring-1 focus:ring-cyan-500/30 focus:border-cyan-500"
+          <button
+            onClick={handleDateEditStart}
+            className={`text-[13px] hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors ${
+              isPastDue ? 'text-red-500 font-medium' : 'text-gray-500 dark:text-gray-400'
+            }`}
+          >
+            {fmtDate(task.due_date) || '\u2014'}
+          </button>
+          {datePickerPos && (
+            <DatePicker
+              currentDate={task.due_date}
+              pos={datePickerPos}
+              onSelect={handleDateChange}
+              onClose={() => setDatePickerPos(null)}
             />
-          ) : (
-            <button
-              onClick={() => setEditingDate(true)}
-              className={`text-[13px] hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors ${
-                isPastDue ? 'text-red-500 font-medium' : 'text-gray-500 dark:text-gray-400'
-              }`}
-            >
-              {fmtDate(task.due_date) || '\u2014'}
-            </button>
           )}
         </div>
 
