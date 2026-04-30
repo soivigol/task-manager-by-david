@@ -1,3 +1,6 @@
+@~/.claude/standards/react-nextjs.md
+@~/.claude/standards/node.md
+
 # Dev Task
 
 Single-user task management and time-tracking web app for a freelancer managing
