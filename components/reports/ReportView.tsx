@@ -5,43 +5,42 @@ import { getReport } from '@/lib/api/reports'
 import type { ReportData } from '@/lib/api/reports'
 import type { Client } from '@/types/app.types'
 import { fmt } from '@/lib/utils'
-import { ReportsIcon, ChevronIcon } from '@/components/ui/Icons'
+import {
+  REPORT_PERIOD_OPTIONS,
+  formatReportEntryDate,
+  formatReportFilename,
+  formatReportPeriodLabel,
+  getReportDateRange,
+  type ReportPeriodMonths,
+} from '@/lib/report-dates'
+import { useAppStore } from '@/lib/store/app-store'
+import { ReportsIcon } from '@/components/ui/Icons'
 
 interface ReportViewProps {
   initialReport: ReportData
   clients: Client[]
 }
 
-function getMonthRange(year: number, month: number) {
-  const start = `${year}-${String(month + 1).padStart(2, '0')}-01`
-  const lastDay = new Date(year, month + 1, 0).getDate()
-  const end = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`
-  return { start, end }
-}
-
-const MONTH_NAMES = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-]
-
 export function ReportView({ initialReport, clients }: ReportViewProps) {
-  const now = new Date()
-  const [year, setYear] = useState(now.getFullYear())
-  const [month, setMonth] = useState(now.getMonth())
+  const addToast = useAppStore((s) => s.addToast)
+  const [periodMonths, setPeriodMonths] = useState<ReportPeriodMonths>(1)
   const [clientFilter, setClientFilter] = useState<string>('all')
   const [report, setReport] = useState<ReportData>(initialReport)
   const [loading, setLoading] = useState(false)
+  const [exportingPdf, setExportingPdf] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const periodLabel = formatReportPeriodLabel(report.startDate, report.endDate)
+
   const fetchReport = useCallback(
-    async (y: number, m: number, cid: string) => {
+    async (months: ReportPeriodMonths, cid: string) => {
       setLoading(true)
       setError(null)
       try {
-        const { start, end } = getMonthRange(y, m)
+        const { startDate, endDate } = getReportDateRange(months)
         const data = await getReport(
-          start,
-          end,
+          startDate,
+          endDate,
           cid === 'all' ? undefined : cid
         )
         setReport(data)
@@ -56,46 +55,57 @@ export function ReportView({ initialReport, clients }: ReportViewProps) {
     []
   )
 
-  const handlePrevMonth = useCallback(() => {
-    let newMonth = month - 1
-    let newYear = year
-    if (newMonth < 0) {
-      newMonth = 11
-      newYear = year - 1
-    }
-    setMonth(newMonth)
-    setYear(newYear)
-    fetchReport(newYear, newMonth, clientFilter)
-  }, [month, year, clientFilter, fetchReport])
-
-  const handleNextMonth = useCallback(() => {
-    let newMonth = month + 1
-    let newYear = year
-    if (newMonth > 11) {
-      newMonth = 0
-      newYear = year + 1
-    }
-    setMonth(newMonth)
-    setYear(newYear)
-    fetchReport(newYear, newMonth, clientFilter)
-  }, [month, year, clientFilter, fetchReport])
+  const handlePeriodChange = useCallback(
+    (months: ReportPeriodMonths) => {
+      setPeriodMonths(months)
+      fetchReport(months, clientFilter)
+    },
+    [clientFilter, fetchReport]
+  )
 
   const handleClientChange = useCallback(
     (cid: string) => {
       setClientFilter(cid)
-      fetchReport(year, month, cid)
+      fetchReport(periodMonths, cid)
     },
-    [year, month, fetchReport]
+    [periodMonths, fetchReport]
   )
 
   const handleExportPDF = useCallback(async () => {
-    // Dynamic import to avoid SSR issues with @react-pdf/renderer
-    const { generateReportPDF } = await import(
-      '@/components/reports/ReportPDF'
-    )
-    const monthLabel = `${MONTH_NAMES[month]} ${year}`
-    await generateReportPDF(report, monthLabel)
-  }, [report, month, year])
+    setExportingPdf(true)
+    try {
+      const response = await fetch('/api/reports/pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(report),
+      })
+
+      if (!response.ok) {
+        const message = await response.text()
+        throw new Error(message || 'Failed to generate PDF')
+      }
+
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = formatReportFilename(report.startDate, report.endDate)
+      document.body.appendChild(link)
+      link.click()
+      setTimeout(() => {
+        document.body.removeChild(link)
+        URL.revokeObjectURL(url)
+      }, 100)
+
+      addToast('PDF downloaded', 'success')
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : 'Failed to generate PDF'
+      addToast(message, 'error')
+    } finally {
+      setExportingPdf(false)
+    }
+  }, [report, addToast])
 
   return (
     <div className="p-4 max-w-[640px]">
@@ -106,28 +116,24 @@ export function ReportView({ initialReport, clients }: ReportViewProps) {
             <h2 className="text-[13px] font-semibold text-gray-800 dark:text-gray-200">
               Time Report
             </h2>
-            {/* Month selector */}
-            <div className="flex items-center gap-2 mt-1">
-              <button
-                onClick={handlePrevMonth}
-                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors p-0.5"
-                title="Previous month"
-              >
-                <ChevronIcon size={10} />
-              </button>
-              <p className="text-[11px] text-gray-500 dark:text-gray-400 font-medium min-w-[110px] text-center">
-                {MONTH_NAMES[month]} {year}
-              </p>
-              <button
-                onClick={handleNextMonth}
-                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors p-0.5 rotate-180"
-                title="Next month"
-              >
-                <ChevronIcon size={10} />
-              </button>
-            </div>
+            <p className="text-[11px] text-gray-500 dark:text-gray-400 font-medium mt-1">
+              {periodLabel}
+            </p>
           </div>
           <div className="flex items-center gap-2">
+            <select
+              value={periodMonths}
+              onChange={(e) =>
+                handlePeriodChange(Number(e.target.value) as ReportPeriodMonths)
+              }
+              className="text-[11px] border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-[4px] bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500"
+            >
+              {REPORT_PERIOD_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
             <select
               value={clientFilter}
               onChange={(e) => handleClientChange(e.target.value)}
@@ -142,9 +148,11 @@ export function ReportView({ initialReport, clients }: ReportViewProps) {
             </select>
             <button
               onClick={handleExportPDF}
-              className="flex items-center gap-1 bg-[#1a1a2e] dark:bg-gray-700 text-white text-[11px] font-medium px-2.5 py-[4px] rounded-lg hover:bg-[#252540] dark:hover:bg-gray-600 transition-colors"
+              disabled={exportingPdf || loading || report.clients.length === 0}
+              className="flex items-center gap-1 bg-[#1a1a2e] dark:bg-gray-700 text-white text-[11px] font-medium px-2.5 py-[4px] rounded-lg hover:bg-[#252540] dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <ReportsIcon size={12} /> PDF
+              <ReportsIcon size={12} />
+              {exportingPdf ? 'Exporting...' : 'PDF'}
             </button>
           </div>
         </div>
@@ -189,18 +197,31 @@ export function ReportView({ initialReport, clients }: ReportViewProps) {
                 </span>
               </div>
 
-              {/* Tasks */}
-              {cl.tasks.map((t) => (
-                <div
-                  key={t.id}
-                  className="flex items-center justify-between py-0.5 pl-4 text-[11px]"
-                >
-                  <span className="text-gray-600 dark:text-gray-400">{t.title}</span>
-                  <span className="text-gray-400 dark:text-gray-500 font-mono">
-                    {fmt(t.totalMinutes)}
-                  </span>
-                </div>
-              ))}
+              {/* Time entries */}
+              {cl.tasks
+                .flatMap((t) =>
+                  t.entries.map((entry) => ({
+                    ...entry,
+                    title: t.title,
+                  }))
+                )
+                .sort((a, b) => a.tracked_date.localeCompare(b.tracked_date))
+                .map((entry) => (
+                  <div
+                    key={entry.id}
+                    className="grid grid-cols-[52px_minmax(0,1fr)_48px] gap-2 items-center py-0.5 pl-4 text-[11px]"
+                  >
+                    <span className="text-gray-400 dark:text-gray-500 font-mono">
+                      {formatReportEntryDate(entry.tracked_date)}
+                    </span>
+                    <span className="text-gray-600 dark:text-gray-400 truncate">
+                      {entry.title}
+                    </span>
+                    <span className="text-gray-400 dark:text-gray-500 font-mono text-right">
+                      {fmt(entry.minutes)}
+                    </span>
+                  </div>
+                ))}
 
               {/* Prepaid balance */}
               {cl.prepaid_total_minutes > 0 && (
